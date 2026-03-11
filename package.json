@@ -3,15 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 127.0.0.1 --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "tsx scripts/seed-events.ts",
+    "db:init": "npx instant-cli@latest init",
+    "db:push": "npx instant-cli@latest push schema",
+    "db:perms": "npx instant-cli@latest push perms"
   },
   "dependencies": {
+    "@instantdb/admin": "^0.22.155",
+    "@instantdb/react": "^0.22.155",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.3.1",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-big-calendar": "^1.19.4",
+    "react-dom": "19.2.3",
+    "tsx": "^4.21.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

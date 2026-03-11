@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clover – Community Events in Bristol
 
-## Getting Started
+Discover social and community events near BS3 Bristol. Complete a questionnaire to get personalized event recommendations.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Configure InstantDB**
+   - Create an app at [instantdb.com](https://instantdb.com)
+   - Add `NEXT_PUBLIC_INSTANT_APP_ID` to `.env.local` (already set)
+   - Run `npm run db:init` to link the app
+   - Run `npm run db:push` to push the schema
+   - Run `npm run db:perms` to push permissions
+   - **Enable Magic Code auth**: In the InstantDB dashboard, go to the Auth tab and ensure Magic Code is enabled (it's on by default)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Google Maps** (optional, for event location maps)
+   - Create a project at [Google Cloud Console](https://console.cloud.google.com/)
+   - Enable the **Maps Embed API**
+   - Create an API key and add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to `.env.local`
+   - Without this, event detail modals show a fallback link to Google Maps
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Seed events** (optional)
+   - Copy `Bristol_200_Community_Events_MASTER_V2.xlsx` to the project root or keep it in `~/Downloads`
+   - Get your admin token from the InstantDB dashboard
+   - Add `INSTANT_APP_ADMIN_TOKEN` to `.env.local`
+   - Run `npm run seed`
 
-## Learn More
+5. **Add questionnaire questions**
+   - Edit `src/config/questions.config.ts`
+   - Add your 20 questions from the Word document
 
-To learn more about Next.js, take a look at the following resources:
+6. **Run the app**
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **/** – All events (Meetup-style list)
+- **/calendar** – Calendar view of events
+- **/login** – Sign in with email magic code
+- **/questionnaire** – Find Your Events (requires sign-in, saves to your account)
+- **/for-you** – Personalized recommendations (requires sign-in)

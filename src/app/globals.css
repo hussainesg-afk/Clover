@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8faf8;
+  --foreground: #1c1917;
+  --clover-teal: #0d9488;
+  --clover-olive: #65a30d;
+  --clover-peach: #f97316;
+  --clover-purple: #8b5cf6;
+  --clover-blue: #3b82f6;
+  --clover-cyan: #06b6d4;
+  --clover-rose: #f43f5e;
+  --clover-amber: #f59e0b;
 }
 
 @theme inline {
@@ -22,5 +30,107 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Clover calendar – professional styling */
+.apple-calendar .rbc-month-view,
+.apple-calendar .rbc-time-view {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e7e5e4;
+  background: #fff;
+}
+
+.apple-calendar .rbc-toolbar {
+  margin-bottom: 0;
+}
+
+.apple-calendar .rbc-header {
+  border-bottom: 1px solid #e7e5e4;
+  padding: 12px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #78716c;
+  background: #fafaf9;
+}
+
+.apple-calendar .rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #e7e5e4;
+}
+
+.apple-calendar .rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid #e7e5e4;
+}
+
+.apple-calendar .rbc-date-cell {
+  padding: 8px 10px;
+  text-align: right;
+  color: #44403c;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.apple-calendar .rbc-off-range-bg {
+  background: #fafaf9;
+}
+
+.apple-calendar .rbc-off-range .rbc-date-cell {
+  color: #a8a29e;
+}
+
+.apple-calendar .rbc-today {
+  background: #f0fdfa;
+}
+
+.apple-calendar .rbc-today .rbc-date-cell {
+  color: #0d9488;
+  font-weight: 600;
+}
+
+.apple-calendar .rbc-event {
+  cursor: pointer;
+}
+
+.apple-calendar .rbc-event:focus {
+  outline: none;
+}
+
+.apple-calendar .rbc-time-slot {
+  border-color: #f5f5f4;
+}
+
+.apple-calendar .rbc-time-header-content {
+  border-left: 1px solid #e7e5e4;
+}
+
+.apple-calendar .rbc-timeslot-group {
+  border-color: #e7e5e4;
+}
+
+.apple-calendar .rbc-show-more {
+  color: #0d9488;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.apple-calendar .rbc-show-more:hover {
+  color: #0f766e;
+  text-decoration: underline;
+}
+
+.apple-calendar .rbc-overlay {
+  border-radius: 8px;
+  border: 1px solid #e7e5e4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.apple-calendar .rbc-overlay-header {
+  border-bottom: 1px solid #e7e5e4;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #44403c;
 }
