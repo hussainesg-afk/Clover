@@ -34,6 +34,12 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+/* Subtle clover watermark pattern for branded surfaces */
+.clover-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='32' cy='20' r='14' fill='%230d9488' fill-opacity='0.03'/%3E%3Ccircle cx='44' cy='32' r='14' fill='%230d9488' fill-opacity='0.03'/%3E%3Ccircle cx='32' cy='44' r='14' fill='%230d9488' fill-opacity='0.03'/%3E%3Ccircle cx='20' cy='32' r='14' fill='%230d9488' fill-opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+
 /* Clover calendar – professional styling */
 .apple-calendar .rbc-month-view,
 .apple-calendar .rbc-time-view {
@@ -133,4 +139,106 @@ body {
   padding: 10px 12px;
   font-weight: 600;
   color: #44403c;
+}
+
+/* Calendar design – timeline style */
+.calendar-design .rbc-toolbar {
+  margin-bottom: 0;
+  padding: 0;
+  border: none;
+}
+
+.calendar-design .rbc-time-view {
+  border: none;
+  border-radius: 0;
+}
+
+.calendar-design .rbc-time-header {
+  border: none;
+}
+
+.calendar-design .rbc-time-header-content {
+  border-left: 1px solid #e7e5e4;
+}
+
+.calendar-design .rbc-time-content {
+  border-top: 1px solid #e7e5e4;
+}
+
+.calendar-design .rbc-timeslot-group {
+  border-color: #e7e5e4;
+  min-height: 60px;
+}
+
+.calendar-design .rbc-time-slot {
+  font-size: 12px;
+  font-weight: 500;
+  color: #78716c;
+}
+
+.calendar-design .rbc-day-slot .rbc-events-container {
+  margin-right: 0;
+}
+
+.calendar-design .rbc-event {
+  border: none !important;
+  padding: 0 !important;
+}
+
+.calendar-design .rbc-event:focus {
+  outline: none;
+}
+
+.calendar-design .rbc-month-view {
+  border: none;
+  border-radius: 0;
+}
+
+.calendar-design .rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #e7e5e4;
+}
+
+.calendar-design .rbc-header {
+  border-bottom: 1px solid #e7e5e4;
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #78716c;
+  background: #fafaf9;
+}
+
+.calendar-design .rbc-date-cell {
+  padding: 8px 10px;
+  text-align: right;
+  color: #44403c;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.calendar-design .rbc-today {
+  background: #fef2f2;
+}
+
+.calendar-design .rbc-today .rbc-date-cell {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.calendar-design .rbc-current-time-indicator {
+  background-color: #ef4444;
+  height: 2px;
+  position: relative;
+}
+
+.calendar-design .rbc-current-time-indicator::before {
+  background-color: #ef4444;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -4px;
 }

@@ -2,7 +2,43 @@ import { i } from "@instantdb/react";
 
 const _schema = i.schema({
   entities: {
+    $users: i.entity({
+      displayName: i.string().optional(),
+    }),
     events: i.entity({
+      title: i.string().optional(),
+      eventName: i.string().optional(),
+      description: i.string().optional(),
+      startDateTime: i.string().optional(),
+      postCode: i.string().optional(),
+      address: i.string().optional(),
+      venueName: i.string().optional(),
+      costType: i.string().optional(),
+      cost: i.string().optional(),
+      accessibility: i.string().optional(),
+      bookingUrl: i.string().optional(),
+      primaryCategory: i.string().optional(),
+      tags: i.string().optional(),
+      eventType: i.string().optional(),
+      priceBand: i.string().optional(),
+      musicType: i.string().optional(),
+      creativeType: i.string().optional(),
+      learningType: i.string().optional(),
+      socialLevel: i.string().optional(),
+      eventFormat: i.string().optional(),
+      meetingPeople: i.string().optional(),
+      eventTime: i.string().optional(),
+      durationBand: i.string().optional(),
+      transport: i.string().optional(),
+      stepFree: i.string().optional(),
+      noise: i.string().optional(),
+      seating: i.string().optional(),
+      primaryBenefit: i.string().optional(),
+      eventMood: i.string().optional(),
+      lat: i.number().optional(),
+      lng: i.number().optional(),
+    }),
+    solo_events: i.entity({
       title: i.string().optional(),
       eventName: i.string().optional(),
       description: i.string().optional(),
@@ -43,6 +79,28 @@ const _schema = i.schema({
       userId: i.string().optional(),
       createdAt: i.number(),
     }),
+    user_settings: i.entity({
+      userId: i.string(),
+      notificationsEnabled: i.boolean(),
+      locationSharingEnabled: i.boolean(),
+      profileVisibility: i.string(),
+    }),
+    voice_posts: i.entity({
+      body: i.string(),
+      createdAt: i.number().indexed(),
+      category: i.string().optional(),
+      postCode: i.string().optional(),
+    }),
+  },
+  links: {
+    postAuthor: {
+      forward: { on: "voice_posts", has: "one", label: "author" },
+      reverse: { on: "$users", has: "many", label: "authoredPosts" },
+    },
+    postUpvotes: {
+      forward: { on: "voice_posts", has: "many", label: "upvotedBy" },
+      reverse: { on: "$users", has: "many", label: "upvotedPosts" },
+    },
   },
 });
 

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { db } from "@/lib/db";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
+import { format, parse, startOfWeek, getDay, addDays, isSameDay } from "date-fns";
 import { parseEventDateTime } from "@/lib/parse-event-date";
 import { enGB } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -18,35 +18,42 @@ interface CalendarEvent {
   start: Date;
   end: Date;
   resource?: string;
+  venueDisplay?: string;
   isSaved?: boolean;
 }
 
-function SavedEventWithPopover({ event }: { event: CalendarEvent }) {
-  const [showPopover, setShowPopover] = useState(false);
+const DOT_COLORS = ["#ef4444", "#3b82f6", "#eab308", "#8b5cf6"];
 
-  const timeStr = format(event.start, "EEE, MMM d · h:mm a");
-  const venue = event.resource;
+function getEventDotsForDay(dayStart: Date, events: CalendarEvent[]): string[] {
+  const dayEnd = addDays(dayStart, 1);
+  const onDay = events.filter(
+    (e) => e.start >= dayStart && e.start < dayEnd
+  );
+  return onDay.slice(0, 4).map((_, i) => DOT_COLORS[i % DOT_COLORS.length]);
+}
+
+function TimelineEventBlock({ event }: { event: CalendarEvent }) {
+  const timeStr = `${format(event.start, "HH:mm")} - ${format(event.end, "HH:mm")}`;
+  const venue = event.venueDisplay ?? event.resource ?? "";
 
   return (
-    <div
-      className="relative h-full w-full"
-      onMouseEnter={() => setShowPopover(true)}
-      onMouseLeave={() => setShowPopover(false)}
-    >
-      <span className="block truncate">{event.title}</span>
-      {showPopover && (
-        <div
-          className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-lg border border-stone-200 bg-white px-3 py-2.5 text-left shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
-          role="tooltip"
-        >
-          <p className="font-medium text-stone-900">{event.title}</p>
-          <p className="mt-0.5 text-xs text-stone-500">{timeStr}</p>
-          {venue && <p className="mt-0.5 text-xs text-stone-400">{venue}</p>}
-          <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-stone-200 bg-white" />
-        </div>
-      )}
+    <div className="flex h-full min-h-0 flex-col gap-2 p-3">
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold text-stone-900">{event.title}</p>
+        {venue && (
+          <p className="mt-0.5 truncate text-sm text-stone-600">{venue}</p>
+        )}
+        <p className="mt-1 text-sm font-semibold text-stone-800">{timeStr}</p>
+      </div>
+      <span className="mt-auto w-fit rounded-full bg-stone-200/80 px-2.5 py-1 text-xs font-medium text-stone-700">
+        Suggested Transport
+      </span>
     </div>
   );
+}
+
+function MonthEventContent({ event }: { event: CalendarEvent }) {
+  return <span className="block truncate">{event.title}</span>;
 }
 
 const locales = { "en-GB": enGB };
@@ -58,82 +65,139 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-interface AppleToolbarProps {
+interface CalendarToolbarProps {
   label: string;
+  date: Date;
   onNavigate: (action: "PREV" | "NEXT" | "TODAY" | "DATE") => void;
   onView: (view: "month" | "week" | "day" | "agenda") => void;
   view: "month" | "week" | "day" | "agenda";
+  onDateSelect: (d: Date) => void;
+  events: CalendarEvent[];
 }
 
-const ChevronLeft = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 18l-6-6 6-6" />
-  </svg>
-);
-const ChevronRight = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 18l6-6-6-6" />
-  </svg>
-);
+function CalendarToolbar({
+  label,
+  date,
+  onNavigate,
+  onView,
+  view,
+  onDateSelect,
+  events,
+}: CalendarToolbarProps) {
+  const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  const dayNames = ["M", "T", "W", "T", "F", "S", "S"];
 
-function AppleLikeToolbar({ label, onNavigate, onView, view }: AppleToolbarProps) {
-  const viewOptions: Array<"month" | "week" | "day"> = ["month", "week", "day"];
+  const goPrev = () => onNavigate("PREV");
+  const goNext = () => onNavigate("NEXT");
 
   return (
-    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          onClick={() => onNavigate("PREV")}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
-          aria-label="Previous"
-        >
-          <ChevronLeft />
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate("TODAY")}
-          className="rounded-lg px-3 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
-        >
-          Today
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate("NEXT")}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
-          aria-label="Next"
-        >
-          <ChevronRight />
-        </button>
-      </div>
-      <h2 className="text-center text-xl font-semibold tracking-tight text-stone-900 sm:text-left">{label}</h2>
-      <div className="flex justify-end">
-        <div className="inline-flex rounded-lg border border-stone-200 bg-stone-50/50 p-0.5">
-          {viewOptions.map((viewOption) => (
+    <div className="mb-6 space-y-5">
+      {/* Date header: large day, month, orange + button */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <button
-              key={viewOption}
               type="button"
-              onClick={() => onView(viewOption)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition ${
-                view === viewOption
-                  ? "bg-white text-stone-900 shadow-sm"
-                  : "text-stone-500 hover:text-stone-700"
+              onClick={goPrev}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
+              aria-label="Previous"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div>
+              <p className="text-4xl font-bold leading-none text-stone-800 sm:text-5xl">
+                {format(date, "d")}
+              </p>
+              <p className="mt-1 text-xl font-bold text-stone-800">
+                {format(date, "MMMM")}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={goNext}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
+              aria-label="Next"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div className="hidden sm:flex gap-1">
+          {(["month", "week", "day"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onView(v)}
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition ${
+                view === v ? "bg-stone-100 text-stone-900" : "text-stone-500 hover:text-stone-700"
               }`}
             >
-              {viewOption}
+              {v}
             </button>
           ))}
         </div>
       </div>
+
+      {/* Week strip */}
+      <div className="border-b border-stone-200">
+        <div className="flex">
+          {weekDays.map((d, i) => {
+            const dots = getEventDotsForDay(d, events);
+            const selected = isSameDay(d, date);
+            return (
+              <button
+                key={d.toISOString()}
+                type="button"
+                onClick={() => onDateSelect(d)}
+                className={`flex flex-1 flex-col items-center py-2 transition ${
+                  selected ? "bg-stone-100" : "hover:bg-stone-50"
+                }`}
+              >
+                <span className="text-sm font-bold text-stone-800">
+                  {dayNames[i]}
+                </span>
+                <span className="mt-1 text-sm font-medium text-stone-700">
+                  {format(d, "d")}
+                </span>
+                {dots.length > 0 && (
+                  <div className="mt-1.5 flex gap-0.5">
+                    {dots.map((color, j) => (
+                      <span
+                        key={j}
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Mobile view switcher */}
+      <div className="flex sm:hidden gap-1">
+        {(["month", "week", "day"] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => onView(v)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition ${
+              view === v ? "bg-stone-100 text-stone-900" : "text-stone-500 hover:text-stone-700"
+            }`}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
     </div>
   );
-}
-
-function getGreetingName(email: string | null | undefined): string {
-  if (!email) return "";
-  const part = email.split("@")[0];
-  if (!part) return "";
-  return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
 }
 
 export default function CalendarPage() {
@@ -144,7 +208,6 @@ export default function CalendarPage() {
   const [date, setDate] = useState(() => new Date());
   const { user } = db.useAuth();
   const { isLoading, error, data } = db.useQuery({ events: {} });
-  const greetingName = getGreetingName(user?.email);
 
   const eventsList = useMemo(() => data?.events ?? [], [data?.events]);
 
@@ -180,16 +243,36 @@ export default function CalendarPage() {
         const n = normalizeEvent(e);
         const start = parseEventDateTime(n.startDateTime ?? "") ?? new Date();
         const end = new Date(start.getTime() + 60 * 60 * 1000);
+        const venueDisplay = [n.venueName, n.postCode].filter(Boolean).join(", ");
         return {
           id: n.id,
           title: n.title,
           start,
           end,
           resource: n.venueName,
+          venueDisplay: venueDisplay || undefined,
           isSaved: savedEventIds.includes(n.id),
         };
       });
   }, [calendarSourceEvents, savedEventIds]);
+
+  const toolbarComponent = useMemo(
+    () =>
+      (props: {
+        label: string;
+        date: Date;
+        onNavigate: (action: string, date?: Date) => void;
+        onView: (view: string) => void;
+        view: string;
+      }) => (
+        <CalendarToolbar
+          {...props}
+          events={events}
+          onDateSelect={(d) => (props.onNavigate as (a: string, d?: Date) => void)("DATE", d)}
+        />
+      ),
+    [events]
+  );
 
   if (isLoading) {
     return (
@@ -209,44 +292,39 @@ export default function CalendarPage() {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-            {greetingName ? `Hello, ${greetingName}` : "Calendar"}
-          </h1>
-          <p className="mt-1.5 text-sm text-stone-500">
-            {savedEventIds.length > 0
-              ? "View your saved events or browse all community events."
-              : "Add events from the Events page to build your calendar."}
-          </p>
-        </div>
-        <div className="inline-flex rounded-lg border border-stone-200 bg-stone-50/50 p-0.5">
-          <button
-            type="button"
-            onClick={() => setCalendarMode("saved")}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition ${
-              effectiveCalendarMode === "saved"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-500 hover:text-stone-700"
-            }`}
-          >
-            My Calendar
-          </button>
-          <button
-            type="button"
-            onClick={() => setCalendarMode("all")}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition ${
-              effectiveCalendarMode === "all"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-500 hover:text-stone-700"
-            }`}
-          >
-            All Events
-          </button>
-        </div>
+      {/* Filter chips - design style */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setCalendarMode("all")}
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+            effectiveCalendarMode === "all"
+              ? "bg-stone-900 text-white"
+              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+          }`}
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5V8.935M12 12l2 2 4-4" />
+          </svg>
+          All
+        </button>
+        <button
+          type="button"
+          onClick={() => setCalendarMode("saved")}
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+            effectiveCalendarMode === "saved"
+              ? "bg-stone-900 text-white"
+              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+          }`}
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          My Calendar
+        </button>
       </div>
 
-      <div className="apple-calendar relative mt-6 h-[680px] overflow-hidden rounded-2xl border border-stone-200/80 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="apple-calendar calendar-design relative h-[680px] overflow-hidden rounded-2xl border border-stone-200/80 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
         <Calendar
           localizer={localizer}
           events={events}
@@ -257,32 +335,38 @@ export default function CalendarPage() {
           tooltipAccessor={null}
           view={view}
           date={date}
+          getNow={() => new Date()}
           onNavigate={(newDate: Date) => setDate(newDate)}
           onView={(newView: string) => {
             if (newView === "month" || newView === "week" || newView === "day") setView(newView);
           }}
           components={{
-            toolbar: AppleLikeToolbar,
+            toolbar: toolbarComponent,
             event: ({ event }: { event: CalendarEvent }) =>
-              event.isSaved ? (
-                <SavedEventWithPopover event={event} />
+              view === "day" || view === "week" ? (
+                <TimelineEventBlock event={event} />
               ) : (
-                <span className="block truncate">{event.title}</span>
+                <MonthEventContent event={event} />
               ),
           }}
-          eventPropGetter={(event: { isSaved?: boolean }) => ({
-            style: {
-              backgroundColor: event.isSaved ? "#0d9488" : "#f5f5f4",
-              border: event.isSaved ? "none" : "1px solid #e7e5e4",
-              borderRadius: "6px",
-              color: event.isSaved ? "white" : "#44403c",
-              fontWeight: 500,
-              fontSize: "12px",
-              padding: "2px 8px",
-            },
-          })}
-          dayPropGetter={(date: Date) => {
-            const day = date.getDay();
+          eventPropGetter={(event: { isSaved?: boolean }) => {
+            const isSaved = event.isSaved;
+            return {
+              style: {
+                backgroundColor: isSaved ? "#fef2f2" : "#f5f5f4",
+                borderLeft: `4px solid ${isSaved ? "#ef4444" : "#44403c"}`,
+                border: "none",
+                borderRadius: "8px",
+                color: "#44403c",
+                fontWeight: 500,
+                fontSize: "13px",
+                padding: 0,
+                overflow: "hidden",
+              },
+            };
+          }}
+          dayPropGetter={(d: Date) => {
+            const day = d.getDay();
             if (day === 0 || day === 6) {
               return { style: { backgroundColor: "#fafaf9" } };
             }

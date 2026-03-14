@@ -1,6 +1,6 @@
 /**
- * Seed script: reads Bristol_200_Community_Events_MASTER_V2.xlsx and inserts events into InstantDB.
- * Run: npx tsx scripts/seed-events.ts
+ * Seed script: reads Bristol_100_Solo_Activities_Master.xlsx and inserts solo events into InstantDB.
+ * Run: npx tsx scripts/seed-solo-events.ts
  * Requires: .env with NEXT_PUBLIC_INSTANT_APP_ID and INSTANT_APP_ADMIN_TOKEN
  * Get admin token from InstantDB dashboard.
  *
@@ -47,11 +47,13 @@ async function main() {
   }
 
   const home = process.env.HOME || homedir();
-  const excelPath = path.join(home, "Downloads", "Bristol_200_Community_Events_MASTER_V2.xlsx");
-  const altPath = path.join(process.cwd(), "Bristol_200_Community_Events_MASTER_V2.xlsx");
+  const excelPath = path.join(home, "Downloads", "Bristol_100_Solo_Activities_Master.xlsx");
+  const altPath = path.join(process.cwd(), "Bristol_100_Solo_Activities_Master.xlsx");
   const filePath = fs.existsSync(excelPath) ? excelPath : altPath;
   if (!fs.existsSync(filePath)) {
-    console.error(`Excel not found. Place Bristol_200_Community_Events_MASTER_V2.xlsx in ~/Downloads or project root`);
+    console.error(
+      `Excel not found. Place Bristol_100_Solo_Activities_Master.xlsx in ~/Downloads or project root`
+    );
     process.exit(1);
   }
 
@@ -68,18 +70,18 @@ async function main() {
     adminToken,
   });
 
-  // Clear existing events before seeding (so we replace with fresh V2 data)
-  const { events: existingEvents } = await db.query({ events: {} });
+  // Clear existing solo_events before seeding
+  const { solo_events: existingEvents } = await db.query({ solo_events: {} });
   const eventList = (existingEvents ?? []) as { id: string }[];
   const eventIds = eventList.map((e) => e.id);
   if (eventIds.length > 0) {
     const deleteBatchSize = 50;
     for (let i = 0; i < eventIds.length; i += deleteBatchSize) {
       const batch = eventIds.slice(i, i + deleteBatchSize);
-      await db.transact(batch.map((eid) => db.tx.events[eid].delete()));
-      console.log(`Cleared ${Math.min(i + deleteBatchSize, eventIds.length)} / ${eventIds.length} old events`);
+      await db.transact(batch.map((eid) => db.tx.solo_events[eid].delete()));
+      console.log(`Cleared ${Math.min(i + deleteBatchSize, eventIds.length)} / ${eventIds.length} old solo events`);
     }
-    console.log("Cleared existing events.");
+    console.log("Cleared existing solo events.");
   }
 
   const batchSize = 25;
@@ -91,7 +93,7 @@ async function main() {
       const postCode = row[col("Post Code")] || "";
       const { lat, lng } = await postcodeToLatLng(postCode);
       tx.push(
-        db.tx.events[id()].update({
+        db.tx.solo_events[id()].update({
           title: row[col("Title")] || "",
           description: row[col("Description")] || "",
           startDateTime: row[col("Start / Date Time")] || "",
@@ -127,7 +129,7 @@ async function main() {
     }
     console.log(`Seeded ${Math.min(i + batchSize, dataRows.length)} / ${dataRows.length}`);
   }
-  console.log("Done seeding events.");
+  console.log("Done seeding solo events.");
 }
 
 main().catch(console.error);

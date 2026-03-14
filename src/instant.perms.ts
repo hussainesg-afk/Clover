@@ -8,12 +8,41 @@ const rules = {
       view: "true",
     },
   },
+  solo_events: {
+    allow: {
+      view: "true",
+    },
+  },
   questionnaire_responses: {
     allow: {
       view: "auth.id != null && auth.id == data.userId",
       create: "auth.id != null && auth.id == data.userId",
       update: "auth.id != null && auth.id == data.userId",
       delete: "auth.id != null && auth.id == data.userId",
+    },
+  },
+  user_settings: {
+    allow: {
+      view: "auth.id != null && auth.id == data.userId",
+      create: "auth.id != null && auth.id == data.userId",
+      update: "auth.id != null && auth.id == data.userId",
+      delete: "auth.id != null && auth.id == data.userId",
+    },
+  },
+  voice_posts: {
+    allow: {
+      view: "true",
+      create: "auth.id != null",
+      update: "auth.id == data.ref('author.id')",
+      delete: "auth.id == data.ref('author.id')",
+    },
+  },
+  $users: {
+    allow: {
+      view: "auth.id != null",
+    },
+    fields: {
+      email: "auth.id == data.id",
     },
   },
 } satisfies InstantRules;
