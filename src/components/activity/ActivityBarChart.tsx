@@ -95,7 +95,7 @@ export default function ActivityBarChart({ data }: ActivityBarChartProps) {
                 border: "1px solid #e7e5e4",
                 boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
               }}
-              formatter={(value: number) => [value, ""]}
+              formatter={(value) => [value ?? 0, ""]}
             />
             <Legend
               wrapperStyle={{ display: "none" }}

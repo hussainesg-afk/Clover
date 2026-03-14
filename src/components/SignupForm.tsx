@@ -108,7 +108,7 @@ export default function SignupForm() {
               } catch (err) {
                 const msg =
                   err && typeof err === "object" && "body" in err && (err as { body?: { message?: string } }).body?.message;
-                setError(msg ?? "Google sign-up failed. Please try again.");
+                setError(typeof msg === "string" ? msg : "Google sign-up failed. Please try again.");
               }
             }}
             onError={() => {

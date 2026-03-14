@@ -16,10 +16,11 @@ export interface HealthImpactCardProps {
   goalTotal: number;
 }
 
-function HeartIcon({ className }: { className?: string }) {
+function HeartIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg
       className={className}
+      style={style}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

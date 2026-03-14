@@ -267,6 +267,7 @@ export default function CalendarPage() {
       }) => (
         <CalendarToolbar
           {...props}
+          view={props.view as "month" | "week" | "day" | "agenda"}
           events={events}
           onDateSelect={(d) => (props.onNavigate as (a: string, d?: Date) => void)("DATE", d)}
         />

@@ -375,24 +375,10 @@ function EmailStep({
                 } catch (err) {
                   const msg =
                     err && typeof err === "object" && "body" in err && (err as { body?: { message?: string } }).body?.message;
-                  setError(msg ?? "Google sign-in failed. Please try again.");
+                  setError(typeof msg === "string" ? msg : "Google sign-in failed. Please try again.");
                 }
               }}
-              onError={(err) => {
-                // #region agent log
-                fetch("http://127.0.0.1:7899/ingest/aef72d50-c03c-4543-893c-ac60c4e175db", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "768e66" },
-                  body: JSON.stringify({
-                    sessionId: "768e66",
-                    location: "LoginHomePage.tsx:GoogleLogin:onError",
-                    message: "Google sign-in error",
-                    data: { error: String(err), origin: typeof window !== "undefined" ? window.location.origin : "ssr" },
-                    timestamp: Date.now(),
-                    hypothesisId: "A",
-                  }),
-                }).catch(() => {});
-                // #endregion
+              onError={() => {
                 setError("Google sign-in was cancelled or failed.");
               }}
             />

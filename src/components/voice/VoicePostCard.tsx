@@ -128,10 +128,10 @@ export default function VoicePostCard({ post, currentUserId }: VoicePostCardProp
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-medium text-teal-800"
             aria-hidden
           >
-            {getInitials(post.author)}
+            {getInitials(post.author ?? null)}
           </div>
           <div className="min-w-0">
-            <p className="font-medium text-stone-900">{getDisplayName(post.author)}</p>
+            <p className="font-medium text-stone-900">{getDisplayName(post.author ?? null)}</p>
             <p className="text-sm text-stone-500">
               {formatDistanceToNow(post.createdAt, { addSuffix: true })}
             </p>
