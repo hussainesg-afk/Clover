@@ -119,6 +119,7 @@ async function main() {
           priceBand: row[col("Price Band")] || undefined,
           primaryBenefit: row[col("Primary Benefit")] || undefined,
           eventMood: row[col("Event Mood")] || undefined,
+          lgbtqFocus: row[col("LGBTQ+ Focus")] || row[col("LGBTQ Focus")] || undefined,
           lat,
           lng,
         })

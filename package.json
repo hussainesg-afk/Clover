@@ -9,6 +9,7 @@
     "lint": "eslint",
     "seed": "tsx scripts/seed-events.ts",
     "seed:solo": "tsx scripts/seed-solo-events.ts",
+    "export:events": "tsx scripts/export-events-to-excel.ts",
     "db:init": "npx instant-cli@latest init",
     "db:push": "npx instant-cli@latest push schema",
     "db:perms": "npx instant-cli@latest push perms"

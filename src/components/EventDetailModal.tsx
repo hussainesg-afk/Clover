@@ -253,6 +253,11 @@ export default function EventDetailModal({ event, onClose }: EventDetailModalPro
             </div>
 
             <div className="flex flex-wrap gap-3">
+              {event.lgbtqFocus && (
+                <span className="rounded-xl bg-rose-100 px-3 py-1 text-sm font-medium text-rose-800">
+                  LGBTQ+ focus
+                </span>
+              )}
               {(event.costType || event.priceBand) && (
                 <span
                   className={`rounded-xl px-3 py-1 text-sm font-medium ${

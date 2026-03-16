@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import SignupForm from "@/components/SignupForm";
@@ -9,13 +9,15 @@ import CloverIcon from "@/components/CloverIcon";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isLoading, user } = db.useAuth();
+  const redirectTo = searchParams.get("redirect") ?? "/";
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/");
+      router.replace(redirectTo.startsWith("/") ? redirectTo : "/");
     }
-  }, [isLoading, user, router]);
+  }, [isLoading, user, router, redirectTo]);
 
   if (isLoading) {
     return (

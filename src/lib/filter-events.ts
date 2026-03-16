@@ -423,6 +423,7 @@ function toEvent(n: NormalizedEvent): Event {
     lat: n.lat,
     lng: n.lng,
     accessibility: n.accessibility,
+    lgbtqFocus: n.lgbtqFocus,
   };
 }
 

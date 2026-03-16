@@ -37,6 +37,7 @@ export interface Event {
   lat?: number;
   lng?: number;
   accessibility?: string;
+  lgbtqFocus?: string;
 }
 
 interface EventCardProps {
@@ -62,11 +63,18 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
             {event.address && ` · ${event.address}`}
           </p>
         )}
-        {event.primaryCategory && (
-          <span className={`mt-2 inline-block rounded-xl px-3 py-1 text-xs font-medium ${getCategoryColor(event.primaryCategory)}`}>
-            {event.primaryCategory}
-          </span>
-        )}
+        <div className="mt-2 flex flex-wrap gap-2">
+          {event.primaryCategory && (
+            <span className={`inline-block rounded-xl px-3 py-1 text-xs font-medium ${getCategoryColor(event.primaryCategory)}`}>
+              {event.primaryCategory}
+            </span>
+          )}
+          {event.lgbtqFocus && (
+            <span className="inline-block rounded-xl bg-rose-100 px-3 py-1 text-xs font-medium text-rose-800">
+              LGBTQ+ focus
+            </span>
+          )}
+        </div>
       </div>
       <span
         className={`shrink-0 rounded-xl px-3 py-1 text-xs font-medium ${

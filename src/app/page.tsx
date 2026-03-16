@@ -90,7 +90,7 @@ export default function HomePage() {
   }
 
   if (!user) {
-    return <LoginHomePage />;
+    return <LoginHomePage userType="community" />;
   }
 
   if (isLoading) {

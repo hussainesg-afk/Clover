@@ -128,6 +128,11 @@ export const OPTION_TO_EVENT_ATTR: Record<string, Record<string, string>> = {
     "no": ANY,
     "sometimes": "Medium",
   },
+  "lgbtq-preference": {
+    "yes": "Yes",
+    "no": ANY,
+    "prefer-not-to-say": ANY,
+  },
   "event-timing": {
     "weekday-am": "Weekday mornings",
     "weekday-pm": "Weekday afternoons",
@@ -205,6 +210,7 @@ export const QUESTION_TO_EVENT_ATTR: Record<string, string> = {
   "social-level": "socialLevel",
   "event-structure": "eventFormat",
   "meet-new-people": "meetingPeople",
+  "lgbtq-preference": "lgbtqFocus",
   "event-timing": "eventTime",
   "event-duration": "durationBand",
   "travel-method": "transport",

@@ -6,9 +6,9 @@ import { db } from "@/lib/db";
 import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
 import { normalizeEvent } from "@/lib/event-normalizer";
-import AuthGate from "@/components/AuthGate";
+import HostAuthGate from "@/components/HostAuthGate";
 
-function BrowseContent() {
+function HostEventsContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { isLoading, error, data } = db.useQuery({ events: {} });
 
@@ -37,15 +37,15 @@ function BrowseContent() {
   return (
     <div className="min-h-screen bg-stone-100">
       <Link
-        href="/for-you"
+        href="/host"
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-900"
       >
-        ← Back to For You
+        ← Back to Host Dashboard
       </Link>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-stone-800">Events near Bristol, BS3</h1>
-          <p className="mt-1 text-stone-600">Browse community events happening in your area.</p>
+          <p className="mt-1 text-stone-600">Browse community events. See what&apos;s on and find opportunities to collaborate.</p>
         </div>
         {events.length > 0 && (
           <a
@@ -86,10 +86,10 @@ function BrowseContent() {
   );
 }
 
-export default function BrowsePage() {
+export default function HostEventsPage() {
   return (
-    <AuthGate>
-      <BrowseContent />
-    </AuthGate>
+    <HostAuthGate>
+      <HostEventsContent />
+    </HostAuthGate>
   );
 }

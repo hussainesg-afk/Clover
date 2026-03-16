@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay, addDays, isSameDay } from "date-fns";
@@ -11,6 +12,7 @@ import { getCalendarEventIds, CALENDAR_UPDATED_EVENT } from "@/lib/calendar-even
 import EventDetailModal from "@/components/EventDetailModal";
 import type { Event } from "@/components/EventCard";
 import { normalizeEvent } from "@/lib/event-normalizer";
+import HostAuthGate from "@/components/HostAuthGate";
 
 interface CalendarEvent {
   id: string;
@@ -76,7 +78,6 @@ interface CalendarToolbarProps {
 }
 
 function CalendarToolbar({
-  label,
   date,
   onNavigate,
   onView,
@@ -93,7 +94,6 @@ function CalendarToolbar({
 
   return (
     <div className="mb-6 space-y-5">
-      {/* Date header: large day, month, orange + button */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -143,7 +143,6 @@ function CalendarToolbar({
         </div>
       </div>
 
-      {/* Week strip */}
       <div className="border-b border-stone-200">
         <div className="flex">
           {weekDays.map((d, i) => {
@@ -181,7 +180,6 @@ function CalendarToolbar({
         </div>
       </div>
 
-      {/* Mobile view switcher */}
       <div className="flex sm:hidden gap-1">
         {(["month", "week", "day"] as const).map((v) => (
           <button
@@ -200,16 +198,15 @@ function CalendarToolbar({
   );
 }
 
-export default function CalendarPage() {
+function HostCalendarContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [savedEventIds, setSavedEventIds] = useState<string[]>([]);
   const [calendarMode, setCalendarMode] = useState<"saved" | "all">("all");
   const [view, setView] = useState<"month" | "week" | "day">("month");
   const [date, setDate] = useState(() => new Date());
-  const { user } = db.useAuth();
   const { isLoading, error, data } = db.useQuery({ events: {} });
 
-  const eventsList = useMemo(() => data?.events ?? [], [data?.events]);
+  const eventsList = data?.events ?? [];
 
   useEffect(() => {
     const refreshSavedEventIds = () => setSavedEventIds(getCalendarEventIds());
@@ -229,50 +226,41 @@ export default function CalendarPage() {
   const effectiveCalendarMode =
     savedEventIds.length === 0 && calendarMode === "saved" ? "all" : calendarMode;
 
-  const calendarSourceEvents = useMemo(() => {
-    if (effectiveCalendarMode === "all") return eventsList;
-    if (savedEventIds.length === 0) return [];
-    return eventsList.filter((e: { id: string }) => savedEventIds.includes(e.id));
-  }, [effectiveCalendarMode, eventsList, savedEventIds]);
+  const calendarSourceEvents = effectiveCalendarMode === "all"
+    ? eventsList
+    : eventsList.filter((e: { id: string }) => savedEventIds.includes(e.id));
 
-  const events = useMemo(() => {
-    const list = calendarSourceEvents;
-    return list
-      .filter((e: { startDateTime?: string }) => e.startDateTime)
-      .map((e: Record<string, unknown>) => {
-        const n = normalizeEvent(e);
-        const start = parseEventDateTime(n.startDateTime ?? "") ?? new Date();
-        const end = new Date(start.getTime() + 60 * 60 * 1000);
-        const venueDisplay = [n.venueName, n.postCode].filter(Boolean).join(", ");
-        return {
-          id: n.id,
-          title: n.title,
-          start,
-          end,
-          resource: n.venueName,
-          venueDisplay: venueDisplay || undefined,
-          isSaved: savedEventIds.includes(n.id),
-        };
-      });
-  }, [calendarSourceEvents, savedEventIds]);
+  const events = calendarSourceEvents
+    .filter((e: { startDateTime?: string }) => e.startDateTime)
+    .map((e: Record<string, unknown>) => {
+      const n = normalizeEvent(e);
+      const start = parseEventDateTime(n.startDateTime ?? "") ?? new Date();
+      const end = new Date(start.getTime() + 60 * 60 * 1000);
+      const venueDisplay = [n.venueName, n.postCode].filter(Boolean).join(", ");
+      return {
+        id: n.id,
+        title: n.title,
+        start,
+        end,
+        resource: n.venueName,
+        venueDisplay: venueDisplay || undefined,
+        isSaved: savedEventIds.includes(n.id),
+      };
+    });
 
-  const toolbarComponent = useMemo(
-    () =>
-      (props: {
-        label: string;
-        date: Date;
-        onNavigate: (action: string, date?: Date) => void;
-        onView: (view: string) => void;
-        view: string;
-      }) => (
-        <CalendarToolbar
-          {...props}
-          view={props.view as "month" | "week" | "day" | "agenda"}
-          events={events}
-          onDateSelect={(d) => (props.onNavigate as (a: string, d?: Date) => void)("DATE", d)}
-        />
-      ),
-    [events]
+  const toolbarComponent = (props: {
+    label: string;
+    date: Date;
+    onNavigate: (action: string, date?: Date) => void;
+    onView: (view: string) => void;
+    view: string;
+  }) => (
+    <CalendarToolbar
+      {...props}
+      view={props.view as "month" | "week" | "day" | "agenda"}
+      events={events}
+      onDateSelect={(d) => (props.onNavigate as (a: string, d?: Date) => void)("DATE", d)}
+    />
   );
 
   if (isLoading) {
@@ -293,7 +281,13 @@ export default function CalendarPage() {
 
   return (
     <div>
-      {/* Filter chips - design style */}
+      <Link
+        href="/host"
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-900"
+      >
+        Back to Host Dashboard
+      </Link>
+
       <div className="mb-4 flex flex-wrap gap-2">
         <button
           type="button"
@@ -304,9 +298,6 @@ export default function CalendarPage() {
               : "bg-stone-100 text-stone-700 hover:bg-stone-200"
           }`}
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5V8.935M12 12l2 2 4-4" />
-          </svg>
           All
         </button>
         <button
@@ -318,9 +309,6 @@ export default function CalendarPage() {
               : "bg-stone-100 text-stone-700 hover:bg-stone-200"
           }`}
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-          </svg>
           My Calendar
         </button>
       </div>
@@ -410,5 +398,13 @@ export default function CalendarPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function HostCalendarPage() {
+  return (
+    <HostAuthGate>
+      <HostCalendarContent />
+    </HostAuthGate>
   );
 }

@@ -36,6 +36,7 @@ export interface NormalizedEvent {
   seating?: string;
   primaryBenefit?: string;
   eventMood?: string;
+  lgbtqFocus?: string;
 }
 
 type RawEvent = Record<string, unknown>;
@@ -148,5 +149,6 @@ export function normalizeEvent(raw: RawEvent): NormalizedEvent {
     seating: getString(raw, "seating", "seating") || undefined,
     primaryBenefit: getString(raw, "primaryBenefit", "primaryBenefit") || undefined,
     eventMood: getString(raw, "eventMood", "eventMood") || undefined,
+    lgbtqFocus: getString(raw, "lgbtqFocus", "lgbtqFocus") || undefined,
   };
 }

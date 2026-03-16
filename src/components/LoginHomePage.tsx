@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { GoogleLogin } from "@react-oauth/google";
 import CloverIcon from "@/components/CloverIcon";
@@ -15,15 +16,20 @@ import {
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_NAME = process.env.NEXT_PUBLIC_INSTANT_GOOGLE_CLIENT_NAME ?? "";
 
-type UserType = "host" | "community";
+export type UserType = "host" | "community";
 
 const HOST_SUBHEADER =
   "Sign in to your host dashboard and see what's happening locally.";
 const COMMUNITY_SUBHEADER =
   "Sign in to discover events and connect with your local community.";
 
-export default function LoginHomePage() {
-  const [userType, setUserType] = useState<UserType>("host");
+interface LoginHomePageProps {
+  userType?: UserType;
+}
+
+export default function LoginHomePage({ userType: initialUserType }: LoginHomePageProps) {
+  const pathname = usePathname();
+  const userType = initialUserType ?? (pathname.startsWith("/host") ? "host" : "community");
   const [sentEmail, setSentEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -40,11 +46,10 @@ export default function LoginHomePage() {
             <CloverIcon size={32} className="text-teal-600" />
           </div>
         </div>
-        {/* User type selector */}
+        {/* User type selector - navigates between community and host areas */}
         <div className="mb-8 flex overflow-hidden rounded-full border border-stone-200 bg-stone-100/50 p-1">
-          <button
-            type="button"
-            onClick={() => setUserType("host")}
+          <Link
+            href="/host"
             className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition ${
               userType === "host"
                 ? "bg-teal-600 text-white shadow-sm"
@@ -65,10 +70,9 @@ export default function LoginHomePage() {
               />
             </svg>
             Host / Venue
-          </button>
-          <button
-            type="button"
-            onClick={() => setUserType("community")}
+          </Link>
+          <Link
+            href="/"
             className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition ${
               userType === "community"
                 ? "bg-teal-600 text-white shadow-sm"
@@ -89,7 +93,7 @@ export default function LoginHomePage() {
               />
             </svg>
             Community member
-          </button>
+          </Link>
         </div>
 
         {/* Welcome message */}
@@ -122,7 +126,7 @@ export default function LoginHomePage() {
         <p className="mt-8 text-center text-sm text-stone-500">
           New to Clover?{" "}
           <Link
-            href="/signup"
+            href={userType === "host" ? "/signup?redirect=/host" : "/signup"}
             className="font-medium text-teal-600 hover:text-teal-700"
           >
             Create an account →

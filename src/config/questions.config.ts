@@ -113,6 +113,16 @@ export const QUESTIONNAIRE_QUESTIONS: Question[] = [
     ],
   },
   {
+    id: "lgbtq-preference",
+    text: "Would you like to socialise more in events focused on gender identity or sexual orientation?",
+    type: "single-select",
+    options: [
+      { id: "yes", label: "Yes" },
+      { id: "no", label: "No" },
+      { id: "prefer-not-to-say", label: "Prefer not to say" },
+    ],
+  },
+  {
     id: "event-timing",
     text: "When do you usually prefer events?",
     type: "multi-select",

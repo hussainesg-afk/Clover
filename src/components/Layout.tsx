@@ -11,11 +11,17 @@ import CloverIcon from "@/components/CloverIcon";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 
-const navItems = [
+const communityNavItems = [
   { href: "/", label: "Home", icon: HomeIcon, color: "text-red-500" },
   { href: "/calendar", label: "Calendar", icon: CalendarIcon, color: "text-amber-500" },
   { href: "/for-you", label: "For You", icon: SparklesIcon, color: "text-emerald-500" },
   { href: "/your-voice", label: "Your Voice", icon: VoiceIcon, color: "text-emerald-600" },
+];
+
+const hostNavItems = [
+  { href: "/host", label: "Home", icon: HomeIcon, color: "text-teal-600" },
+  { href: "/host/events", label: "Events", icon: SparklesIcon, color: "text-teal-600" },
+  { href: "/host/calendar", label: "Calendar", icon: CalendarIcon, color: "text-teal-600" },
 ];
 
 function HomeIcon({ active, color }: { active?: boolean; color?: string }) {
@@ -121,7 +127,10 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
               <ForwardArrowIcon />
             </button>
           </div>
-          <Link href="/" className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2">
+          <Link
+            href={pathname.startsWith("/host") ? "/host" : "/"}
+            className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2"
+          >
             <CloverIcon size={28} className="text-teal-600" />
             <span className="text-xl font-semibold tracking-tight text-stone-800">Clover</span>
           </Link>
@@ -150,7 +159,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
               </>
             ) : (
               <Link
-                href="/"
+                href={pathname.startsWith("/host") ? "/host" : "/"}
                 className="rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:from-teal-600 hover:to-cyan-600"
               >
                 Sign in
@@ -167,7 +176,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
       {user && (
       <nav className="fixed bottom-4 left-4 right-4 z-20 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-md">
         <div className="flex items-center justify-around rounded-2xl bg-white/95 px-4 py-3 shadow-lg shadow-stone-200/50 ring-1 ring-stone-200/80 backdrop-blur-sm">
-          {navItems.map(({ href, label, icon: Icon, color }) => {
+          {(pathname.startsWith("/host") ? hostNavItems : communityNavItems).map(({ href, label, icon: Icon, color }) => {
             const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
             return (
               <Link
