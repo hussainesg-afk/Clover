@@ -6,6 +6,7 @@ const _schema = i.schema({
       displayName: i.string().optional(),
     }),
     events: i.entity({
+      organizerId: i.string().optional(),
       title: i.string().optional(),
       eventName: i.string().optional(),
       description: i.string().optional(),

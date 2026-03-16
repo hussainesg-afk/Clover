@@ -82,6 +82,38 @@ export default function HostPage() {
       {/* Card grid - similar to community but host-focused */}
       <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Link
+          href="/host/add-event"
+          className="group flex flex-col rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 p-5 text-white shadow-lg transition hover:shadow-xl"
+        >
+          <span className="text-xs font-medium uppercase tracking-wider text-white/70">Submit</span>
+          <h3 className="mt-1 text-xl font-bold">Add event</h3>
+          <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
+            Post a new event to the community list. Fill in the questionnaire to add your event.
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">
+              →
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href="/host/my-events"
+          className="group flex flex-col rounded-3xl bg-gradient-to-br from-rose-500 to-pink-600 p-5 text-white shadow-lg transition hover:shadow-xl"
+        >
+          <span className="text-xs font-medium uppercase tracking-wider text-white/70">Manage</span>
+          <h3 className="mt-1 text-xl font-bold">My posted events</h3>
+          <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
+            View and manage events you&apos;ve added. Remove them if you need to cancel.
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">
+              →
+            </span>
+          </div>
+        </Link>
+
+        <Link
           href="/host/events"
           className="group flex flex-col rounded-3xl bg-gradient-to-br from-teal-600 to-teal-700 p-5 text-white shadow-lg transition hover:shadow-xl"
         >
@@ -108,6 +140,22 @@ export default function HostPage() {
           <h3 className="mt-1 text-xl font-bold">Calendar</h3>
           <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
             View events on the calendar. Plan your venue schedule and see what&apos;s happening when.
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">
+              →
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href="/host/your-voice"
+          className="group flex flex-col rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-5 text-white shadow-lg transition hover:shadow-xl sm:col-span-2"
+        >
+          <span className="text-xs font-medium uppercase tracking-wider text-white/70">Community</span>
+          <h3 className="mt-1 text-xl font-bold">Your Voice</h3>
+          <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
+            See what the community is sharing. Posts, feedback, and conversations from event-goers and hosts.
           </p>
           <div className="mt-4 flex items-center justify-between">
             <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">

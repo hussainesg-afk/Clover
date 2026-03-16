@@ -5,12 +5,15 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
+import EventSearchBar from "@/components/EventSearchBar";
 import { filterEventsWithDebug } from "@/lib/filter-events";
+import { filterEventsBySearch } from "@/lib/filter-events-by-search";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import AuthGate from "@/components/AuthGate";
 
 function SoloTopPicksContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const user = db.useUser();
   const userId = user?.id;
 
@@ -135,8 +138,14 @@ function SoloTopPicksContent() {
           No perfect matches found. Here are some solo events close to your preferences you might enjoy.
         </p>
       )}
+      <EventSearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Search solo events..."
+        className="mt-6"
+      />
       <div className="mt-6 space-y-4">
-        {filteredEvents.map((event) => (
+        {filterEventsBySearch(filteredEvents, searchQuery).map((event) => (
           <EventCard
             key={event.id}
             event={event}

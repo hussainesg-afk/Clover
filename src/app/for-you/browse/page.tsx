@@ -1,21 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
+import EventSearchBar from "@/components/EventSearchBar";
 import { normalizeEvent } from "@/lib/event-normalizer";
+import { filterEventsBySearch } from "@/lib/filter-events-by-search";
 import AuthGate from "@/components/AuthGate";
 
 function BrowseContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { isLoading, error, data } = db.useQuery({ events: {} });
 
   const rawEvents = data?.events ?? [];
-  const events = rawEvents.map((raw: Record<string, unknown>) =>
-    normalizeEvent(raw)
-  ) as Event[];
+  const events = useMemo(
+    () =>
+      rawEvents.map((raw: Record<string, unknown>) =>
+        normalizeEvent(raw)
+      ) as Event[],
+    [rawEvents]
+  );
+  const filteredEvents = filterEventsBySearch(events, searchQuery);
 
   if (isLoading) {
     return (
@@ -42,32 +50,33 @@ function BrowseContent() {
       >
         ← Back to For You
       </Link>
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-stone-800">Events near Bristol, BS3</h1>
-          <p className="mt-1 text-stone-600">Browse community events happening in your area.</p>
-        </div>
-        {events.length > 0 && (
-          <a
-            href="/api/export-events"
-            download="Bristol_200_Community_Events.xlsx"
-            className="inline-flex items-center gap-2 rounded-xl bg-teal-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-teal-600"
-          >
-            Download Excel
-          </a>
-        )}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-stone-800">Events near Bristol, BS3</h1>
+        <p className="mt-1 text-stone-600">Browse community events happening in your area.</p>
       </div>
+      <EventSearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Search events..."
+        className="mb-6"
+      />
       <div className="space-y-4">
-        {events.length === 0 ? (
+        {filteredEvents.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-stone-200 bg-white p-12 text-center text-stone-500 shadow-sm">
-            <p className="font-medium">No events yet</p>
-            <p className="mt-1 text-sm">
-              Run the seed script to load events from Bristol_200_Community_Events_MASTER_V2.xlsx
+            <p className="font-medium">
+              {searchQuery.trim() ? "No events match your search" : "No events yet"}
             </p>
-            <p className="mt-2 font-mono text-xs">npx tsx scripts/seed-events.ts</p>
+            <p className="mt-1 text-sm">
+              {searchQuery.trim()
+                ? "Try a different search term"
+                : "Run the seed script to load events from Bristol_200_Community_Events_MASTER_V2.xlsx"}
+            </p>
+            {!searchQuery.trim() && (
+              <p className="mt-2 font-mono text-xs">npx tsx scripts/seed-events.ts</p>
+            )}
           </div>
         ) : (
-          events.map((event) => (
+          filteredEvents.map((event) => (
             <EventCard
               key={event.id}
               event={event}
