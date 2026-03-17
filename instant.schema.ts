@@ -109,6 +109,17 @@ const _schema = i.schema({
       lat: i.number(),
       lng: i.number(),
     }),
+    conversations: i.entity({
+      participant1Id: i.string(),
+      participant2Id: i.string(),
+      createdAt: i.number().indexed(),
+    }),
+    messages: i.entity({
+      conversationId: i.string(),
+      senderId: i.string(),
+      body: i.string(),
+      createdAt: i.number().indexed(),
+    }),
   },
   links: {
     postAuthor: {
@@ -134,6 +145,22 @@ const _schema = i.schema({
     userLocationUser: {
       forward: { on: "user_locations", has: "one", label: "user" },
       reverse: { on: "$users", has: "many", label: "userLocation" },
+    },
+    conversationParticipant1: {
+      forward: { on: "conversations", has: "one", label: "participant1" },
+      reverse: { on: "$users", has: "many", label: "conversationsAsParticipant1" },
+    },
+    conversationParticipant2: {
+      forward: { on: "conversations", has: "one", label: "participant2" },
+      reverse: { on: "$users", has: "many", label: "conversationsAsParticipant2" },
+    },
+    messageConversation: {
+      forward: { on: "messages", has: "one", label: "conversation" },
+      reverse: { on: "conversations", has: "many", label: "messages" },
+    },
+    messageSender: {
+      forward: { on: "messages", has: "one", label: "sender" },
+      reverse: { on: "$users", has: "many", label: "sentMessages" },
     },
   },
 });

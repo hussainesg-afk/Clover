@@ -203,17 +203,10 @@ export default function ProfileSidebar({ isOpen, onClose, user }: ProfileSidebar
                 onClick={onClose}
                 className="flex items-center gap-4 rounded-2xl px-3 py-3 transition hover:bg-stone-50"
               >
-                <div className="relative shrink-0">
-                  <MessagesIcon className="h-6 w-6 text-teal-600" />
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
-                    4
-                  </span>
-                </div>
+                <MessagesIcon className="h-6 w-6 shrink-0 text-teal-600" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-teal-800">Messages</p>
-                  <p className="truncate text-sm text-stone-500">
-                    Dave J. - &quot;Let&apos;s make it happen, see...&quot;
-                  </p>
+                  <p className="text-sm text-stone-500">Direct messages with friends</p>
                 </div>
               </Link>
             </nav>

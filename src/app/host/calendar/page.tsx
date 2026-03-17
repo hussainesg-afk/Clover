@@ -288,14 +288,14 @@ function HostCalendarContent() {
         Back to Host Dashboard
       </Link>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="sticky top-16 z-10 -mx-4 mb-4 flex flex-wrap gap-2 bg-stone-100/95 px-4 py-4 backdrop-blur-sm">
         <button
           type="button"
           onClick={() => setCalendarMode("all")}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+          className={`inline-flex min-h-[44px] min-w-[44px] cursor-pointer touch-manipulation select-none items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] ${
             calendarMode === "all"
               ? "bg-stone-900 text-white"
-              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+              : "bg-white text-stone-700 shadow-sm ring-1 ring-stone-200/80 hover:bg-stone-50"
           }`}
         >
           All
@@ -303,10 +303,10 @@ function HostCalendarContent() {
         <button
           type="button"
           onClick={() => setCalendarMode("saved")}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+          className={`inline-flex min-h-[44px] min-w-[44px] cursor-pointer touch-manipulation select-none items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] ${
             calendarMode === "saved"
               ? "bg-stone-900 text-white"
-              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+              : "bg-white text-stone-700 shadow-sm ring-1 ring-stone-200/80 hover:bg-stone-50"
           }`}
         >
           My Calendar

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
 
@@ -235,10 +236,18 @@ export default function FriendsPage() {
           {friends.map((f) => (
             <div
               key={f.id}
-              className="flex items-center gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
+              className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
             >
-              <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
-              <span className="font-medium text-stone-800">{getUserDisplay(f)}</span>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
+                <span className="font-medium text-stone-800">{getUserDisplay(f)}</span>
+              </div>
+              <Link
+                href={`/social/messages?with=${f.id}`}
+                className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+              >
+                Message
+              </Link>
             </div>
           ))}
         </div>

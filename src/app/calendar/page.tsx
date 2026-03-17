@@ -293,18 +293,18 @@ export default function CalendarPage() {
 
   return (
     <div>
-      {/* Filter chips - design style */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      {/* Filter chips - sticky so they stay visible when scrolling on mobile */}
+      <div className="sticky top-16 z-10 -mx-4 -mt-6 mb-4 flex flex-wrap gap-2 bg-stone-100/95 px-4 py-4 backdrop-blur-sm">
         <button
           type="button"
           onClick={() => setCalendarMode("all")}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+          className={`inline-flex min-h-[44px] min-w-[44px] cursor-pointer touch-manipulation select-none items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] ${
             calendarMode === "all"
               ? "bg-stone-900 text-white"
-              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+              : "bg-white text-stone-700 shadow-sm ring-1 ring-stone-200/80 hover:bg-stone-50"
           }`}
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5V8.935M12 12l2 2 4-4" />
           </svg>
           All
@@ -312,13 +312,13 @@ export default function CalendarPage() {
         <button
           type="button"
           onClick={() => setCalendarMode("saved")}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+          className={`inline-flex min-h-[44px] min-w-[44px] cursor-pointer touch-manipulation select-none items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] ${
             calendarMode === "saved"
               ? "bg-stone-900 text-white"
-              : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+              : "bg-white text-stone-700 shadow-sm ring-1 ring-stone-200/80 hover:bg-stone-50"
           }`}
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
           </svg>
           My Calendar

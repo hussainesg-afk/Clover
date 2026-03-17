@@ -78,6 +78,27 @@ const rules = {
       delete: "auth.id == data.userId",
     },
   },
+  conversations: {
+    allow: {
+      view: "auth.id == data.participant1Id || auth.id == data.participant2Id",
+      create: "auth.id != null && (auth.id == data.participant1Id || auth.id == data.participant2Id)",
+      update: "auth.id == data.participant1Id || auth.id == data.participant2Id",
+      delete: "auth.id == data.participant1Id || auth.id == data.participant2Id",
+    },
+  },
+  messages: {
+    allow: {
+      view:
+        "auth.id == data.ref('conversation.participant1Id') || auth.id == data.ref('conversation.participant2Id')",
+      create: "auth.id == data.senderId",
+      update: "auth.id == data.senderId",
+      delete: "auth.id == data.senderId",
+      link: {
+        conversation: "auth.id == data.senderId",
+        sender: "auth.id == data.senderId",
+      },
+    },
+  },
 } satisfies InstantRules;
 
 export default rules;
