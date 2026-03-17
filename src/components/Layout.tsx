@@ -20,16 +20,16 @@ const communityNavItems = [
 
 const hostNavItems = [
   { href: "/host", label: "Home", icon: HomeIcon, color: "text-teal-600" },
-  { href: "/host/add-event", label: "Add Event", icon: SparklesIcon, color: "text-teal-600" },
-  { href: "/host/my-events", label: "My Events", icon: CalendarIcon, color: "text-teal-600" },
-  { href: "/host/events", label: "Browse", icon: SparklesIcon, color: "text-teal-600" },
+  { href: "/host/add-event", label: "Add Event", icon: PlusIcon, color: "text-teal-600" },
+  { href: "/host/my-events", label: "My Events", icon: ListIcon, color: "text-teal-600" },
+  { href: "/host/events", label: "Browse", icon: SearchIcon, color: "text-teal-600" },
   { href: "/host/your-voice", label: "Voice", icon: VoiceIcon, color: "text-teal-600" },
 ];
 
 function HomeIcon({ active, color }: { active?: boolean; color?: string }) {
   return (
     <svg
-      className={`h-6 w-6 ${active ? color ?? "text-red-500" : "text-stone-400"}`}
+      className={`h-5 w-5 shrink-0 ${active ? color ?? "text-red-500" : "text-stone-400"}`}
       fill={active ? "currentColor" : "none"}
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -43,7 +43,7 @@ function HomeIcon({ active, color }: { active?: boolean; color?: string }) {
 function CalendarIcon({ active, color }: { active?: boolean; color?: string }) {
   return (
     <svg
-      className={`h-6 w-6 ${active ? color ?? "text-amber-500" : "text-stone-400"}`}
+      className={`h-5 w-5 shrink-0 ${active ? color ?? "text-amber-500" : "text-stone-400"}`}
       fill={active ? "currentColor" : "none"}
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -57,7 +57,7 @@ function CalendarIcon({ active, color }: { active?: boolean; color?: string }) {
 function SparklesIcon({ active, color }: { active?: boolean; color?: string }) {
   return (
     <svg
-      className={`h-6 w-6 ${active ? color ?? "text-emerald-500" : "text-stone-400"}`}
+      className={`h-5 w-5 shrink-0 ${active ? color ?? "text-emerald-500" : "text-stone-400"}`}
       fill={active ? "currentColor" : "none"}
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -72,16 +72,43 @@ function VoiceIcon({ active, color }: { active?: boolean; color?: string }) {
   const c = active ? (color ?? "text-emerald-600") : "text-stone-400";
   return (
     <svg
-      className={`h-6 w-6 ${c}`}
+      className={`h-5 w-5 shrink-0 ${c}`}
       viewBox="0 0 24 24"
       fill="currentColor"
     >
-      {/* Sound wave / equalizer: 5 vertical bars (short, medium, tall, medium, short) */}
       <rect x="3" y="12" width="2" height="4" rx="1" />
       <rect x="7" y="10" width="2" height="8" rx="1" />
       <rect x="11" y="6" width="2" height="16" rx="1" />
       <rect x="15" y="10" width="2" height="8" rx="1" />
       <rect x="19" y="12" width="2" height="4" rx="1" />
+    </svg>
+  );
+}
+
+function PlusIcon({ active, color }: { active?: boolean; color?: string }) {
+  const c = active ? (color ?? "text-teal-600") : "text-stone-400";
+  return (
+    <svg className={`h-5 w-5 shrink-0 ${c}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function ListIcon({ active, color }: { active?: boolean; color?: string }) {
+  const c = active ? (color ?? "text-teal-600") : "text-stone-400";
+  return (
+    <svg className={`h-5 w-5 shrink-0 ${c}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+    </svg>
+  );
+}
+
+function SearchIcon({ active, color }: { active?: boolean; color?: string }) {
+  const c = active ? (color ?? "text-teal-600") : "text-stone-400";
+  return (
+    <svg className={`h-5 w-5 shrink-0 ${c}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
     </svg>
   );
 }
@@ -191,22 +218,25 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
       </main>
 
       {user && (
-      <nav className="fixed bottom-4 left-4 right-4 z-20 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-md">
-        <div className="flex items-center justify-around rounded-2xl bg-white/95 px-4 py-3 shadow-lg shadow-stone-200/50 ring-1 ring-stone-200/80 backdrop-blur-sm">
+      <nav className="fixed bottom-4 left-4 right-4 z-20 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-lg">
+        <div className="flex items-center justify-around gap-1 rounded-2xl border border-stone-200/90 bg-white px-2 py-2.5 shadow-xl shadow-stone-300/25">
           {(pathname.startsWith("/host") ? hostNavItems : communityNavItems).map(({ href, label, icon: Icon, color }) => {
             const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
+            const isHost = pathname.startsWith("/host");
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center gap-1 rounded-2xl px-4 py-2 transition sm:flex-row sm:gap-2 ${
+                className={`flex flex-1 flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200 sm:flex-row sm:justify-center sm:gap-2 ${
                   isActive
-                    ? "bg-stone-100 text-stone-900"
-                    : "text-stone-500 hover:bg-stone-50 hover:text-stone-700"
+                    ? isHost
+                      ? "bg-teal-50 text-teal-800"
+                      : "bg-stone-100 text-stone-900"
+                    : "text-stone-500 hover:bg-stone-50 hover:text-stone-600"
                 }`}
               >
                 <Icon active={isActive} color={color} />
-                <span className="text-xs font-medium sm:text-sm">{label}</span>
+                <span className="text-[11px] font-medium sm:text-sm">{label}</span>
               </Link>
             );
           })}
