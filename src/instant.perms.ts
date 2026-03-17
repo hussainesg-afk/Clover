@@ -41,6 +41,9 @@ const rules = {
       link: {
         upvotedBy: "auth.id != null && auth.id == linkedData.id",
       },
+      unlink: {
+        upvotedBy: "auth.id != null && auth.id == linkedData.id",
+      },
     },
   },
   $users: {
