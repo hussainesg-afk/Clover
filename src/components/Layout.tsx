@@ -23,7 +23,6 @@ const hostNavItems = [
   { href: "/host/add-event", label: "Add Event", icon: SparklesIcon, color: "text-teal-600" },
   { href: "/host/my-events", label: "My Events", icon: CalendarIcon, color: "text-teal-600" },
   { href: "/host/events", label: "Browse", icon: SparklesIcon, color: "text-teal-600" },
-  { href: "/host/calendar", label: "Calendar", icon: CalendarIcon, color: "text-teal-600" },
   { href: "/host/your-voice", label: "Voice", icon: VoiceIcon, color: "text-teal-600" },
 ];
 
@@ -140,6 +139,21 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
           <div className="flex min-w-[72px] justify-end items-center gap-3">
             {user ? (
               <>
+                {pathname.startsWith("/host") ? (
+                  <Link
+                    href="/"
+                    className="text-sm font-medium text-stone-600 hover:text-stone-900 transition"
+                  >
+                    Community
+                  </Link>
+                ) : (
+                  <Link
+                    href="/host"
+                    className="text-sm font-medium text-stone-600 hover:text-stone-900 transition"
+                  >
+                    Host
+                  </Link>
+                )}
                 <span className="hidden max-w-[140px] truncate text-sm text-stone-500 sm:inline">
                   {user.email}
                 </span>

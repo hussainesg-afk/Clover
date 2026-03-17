@@ -6,6 +6,9 @@ const rules = {
   events: {
     allow: {
       view: "true",
+      create: "auth.id != null",
+      update: "auth.id != null && (data.organizerId == null || data.organizerId == auth.id)",
+      delete: "auth.id != null && (data.organizerId == null || data.organizerId == auth.id)",
     },
   },
   solo_events: {
