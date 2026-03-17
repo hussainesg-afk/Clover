@@ -174,14 +174,14 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
                     href="/"
                     className="text-sm font-medium text-stone-600 hover:text-stone-900 transition"
                   >
-                    Community
+                    Host
                   </Link>
                 ) : (
                   <Link
                     href="/host"
                     className="text-sm font-medium text-stone-600 hover:text-stone-900 transition"
                   >
-                    Host
+                    Community member
                   </Link>
                 )}
                 <span className="hidden max-w-[140px] truncate text-sm text-stone-500 sm:inline">
