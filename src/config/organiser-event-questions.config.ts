@@ -52,35 +52,35 @@ export const ORGANISER_QUESTION_TO_EVENT_FIELD: Record<string, string> = {
 export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   {
     id: "title",
-    text: "Event title",
+    text: "What's the name of your event?",
     type: "text",
     options: [],
     required: true,
   },
   {
     id: "description",
-    text: "Event description",
+    text: "Describe your event for attendees",
     type: "text",
     options: [],
     required: true,
   },
   {
     id: "startDateTime",
-    text: "Start date and time (e.g. 15 Mar 2025, 2pm or 2025-03-15 14:00)",
+    text: "When does it start? (e.g. 15 Mar 2025, 2pm)",
     type: "text",
     options: [],
     required: true,
   },
   {
     id: "venueName",
-    text: "Venue name",
+    text: "Where is it held? (venue name)",
     type: "text",
     options: [],
     required: true,
   },
   {
     id: "address",
-    text: "Full address",
+    text: "Street address (if different from postcode)",
     type: "text",
     options: [],
   },
@@ -93,36 +93,36 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "bookingUrl",
-    text: "Booking URL (optional)",
+    text: "Booking or sign-up link (optional)",
     type: "text",
     options: [],
   },
   {
     id: "accessibility",
-    text: "Accessibility information",
+    text: "Is the venue wheelchair accessible?",
     type: "single-select",
     options: [
       { id: "Yes", label: "Yes" },
       { id: "No", label: "No" },
-      { id: "Preferable", label: "Preferable" },
+      { id: "Preferable", label: "Partially accessible" },
       { id: "Not specified", label: "Not specified" },
     ],
   },
   {
     id: "costType",
-    text: "Cost type",
+    text: "What does it cost to attend?",
     type: "single-select",
     options: [
       { id: "Free events only", label: "Free events only" },
       { id: "Up to £5", label: "Up to £5" },
       { id: "Up to £10", label: "Up to £10" },
       { id: "Up to £20", label: "Up to £20" },
-      { id: "Any Price", label: "Any Price" },
+      { id: "Any Price", label: "Various / pay what you can" },
     ],
   },
   {
     id: "primaryCategory",
-    text: "Primary category",
+    text: "What type of event is it?",
     type: "single-select",
     options: [
       { id: "Coffee Mornings / Social Chats", label: "Coffee Mornings / Social Chats" },
@@ -141,7 +141,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "musicType",
-    text: "Music type (if applicable)",
+    text: "Music style (if it's a music event)",
     type: "single-select",
     options: [
       { id: "Acoustic / Folk", label: "Acoustic / Folk" },
@@ -157,7 +157,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "creativeType",
-    text: "Creative type (if applicable)",
+    text: "Creative focus (if it's a creative event)",
     type: "single-select",
     options: [
       { id: "Painting", label: "Painting" },
@@ -172,7 +172,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "learningType",
-    text: "Learning type (if applicable)",
+    text: "Learning focus (if it's a learning event)",
     type: "single-select",
     options: [
       { id: "Technology Help", label: "Technology Help" },
@@ -188,7 +188,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "socialLevel",
-    text: "Social level",
+    text: "How social is it?",
     type: "single-select",
     options: [
       { id: "Mostly independent / low interaction", label: "Mostly independent / low interaction" },
@@ -199,7 +199,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "eventFormat",
-    text: "Event format",
+    text: "How is the event run?",
     type: "single-select",
     options: [
       { id: "Workshop", label: "Workshop" },
@@ -211,17 +211,17 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "meetingPeople",
-    text: "Meeting people focus",
+    text: "How much is it about meeting new people?",
     type: "single-select",
     options: [
-      { id: "High", label: "High" },
-      { id: "Medium", label: "Medium" },
-      { id: "Low", label: "Low" },
+      { id: "High", label: "Very much so" },
+      { id: "Medium", label: "Somewhat" },
+      { id: "Low", label: "Not really" },
     ],
   },
   {
     id: "eventTime",
-    text: "Event time",
+    text: "When does it typically run?",
     type: "single-select",
     options: [
       { id: "Weekday mornings", label: "Weekday mornings" },
@@ -234,7 +234,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "durationBand",
-    text: "Duration",
+    text: "How long does it last?",
     type: "single-select",
     options: [
       { id: "1-2 hours", label: "1-2 hours" },
@@ -245,7 +245,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "transport",
-    text: "Transport options",
+    text: "How do people usually get there?",
     type: "single-select",
     options: [
       { id: "Walking", label: "Walking" },
@@ -257,17 +257,17 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "stepFree",
-    text: "Step-free access",
+    text: "Is there step-free access?",
     type: "single-select",
     options: [
       { id: "Yes", label: "Yes" },
       { id: "No", label: "No" },
-      { id: "Preferable", label: "Preferable" },
+      { id: "Preferable", label: "Partially accessible" },
     ],
   },
   {
     id: "noise",
-    text: "Noise level",
+    text: "What's the noise level like?",
     type: "single-select",
     options: [
       { id: "Quiet", label: "Quiet" },
@@ -277,29 +277,29 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "seating",
-    text: "Seating available",
+    text: "Is seating available?",
     type: "single-select",
     options: [
       { id: "Yes, essential", label: "Yes, essential" },
-      { id: "Preferable", label: "Preferable" },
+      { id: "Preferable", label: "Preferred but not essential" },
       { id: "No", label: "No" },
     ],
   },
   {
     id: "priceBand",
-    text: "Price band",
+    text: "Price range",
     type: "single-select",
     options: [
       { id: "Free events only", label: "Free events only" },
       { id: "Up to £5", label: "Up to £5" },
       { id: "Up to £10", label: "Up to £10" },
       { id: "Up to £20", label: "Up to £20" },
-      { id: "Any Price", label: "Any Price" },
+      { id: "Any Price", label: "Various / pay what you can" },
     ],
   },
   {
     id: "primaryBenefit",
-    text: "Primary benefit",
+    text: "What's the main benefit for attendees?",
     type: "single-select",
     options: [
       { id: "Meet new people", label: "Meet new people" },
@@ -312,7 +312,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "eventMood",
-    text: "Event mood",
+    text: "What's the vibe?",
     type: "single-select",
     options: [
       { id: "Calm and relaxed", label: "Calm and relaxed" },
@@ -324,7 +324,7 @@ export const ORGANISER_EVENT_QUESTIONS: OrganiserQuestion[] = [
   },
   {
     id: "lgbtqFocus",
-    text: "LGBTQ+ focus",
+    text: "Is it LGBTQ+ focused?",
     type: "single-select",
     options: [
       { id: "Yes", label: "Yes" },

@@ -216,24 +216,6 @@ function EmailStep({
   const [googleNonce] = useState(() =>
     typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : ""
   );
-  // #region agent log
-  useEffect(() => {
-    if (typeof window !== "undefined" && usePopupFlow) {
-      fetch("http://127.0.0.1:7899/ingest/aef72d50-c03c-4543-893c-ac60c4e175db", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "768e66" },
-        body: JSON.stringify({
-          sessionId: "768e66",
-          location: "LoginHomePage.tsx:EmailStep",
-          message: "Google auth context",
-          data: { origin: window.location.origin, href: window.location.href, usePopupFlow: !!usePopupFlow },
-          timestamp: Date.now(),
-          hypothesisId: "B",
-        }),
-      }).catch(() => {});
-    }
-  }, [usePopupFlow]);
-  // #endregion
   useEffect(() => {
     if (!usePopupFlow && GOOGLE_CLIENT_NAME && typeof window !== "undefined") {
       setGoogleAuthUrl(
@@ -356,20 +338,6 @@ function EmailStep({
               onSuccess={async ({ credential }) => {
                 if (!credential) return;
                 setError(null);
-                // #region agent log
-                fetch("http://127.0.0.1:7899/ingest/aef72d50-c03c-4543-893c-ac60c4e175db", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "768e66" },
-                  body: JSON.stringify({
-                    sessionId: "768e66",
-                    location: "LoginHomePage.tsx:GoogleLogin:onSuccess",
-                    message: "Google sign-in success",
-                    data: { hasCredential: !!credential },
-                    timestamp: Date.now(),
-                    hypothesisId: "A",
-                  }),
-                }).catch(() => {});
-                // #endregion
                 try {
                   await db.auth.signInWithIdToken({
                     clientName: GOOGLE_CLIENT_NAME,

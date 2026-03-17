@@ -8,6 +8,7 @@ import {
   FIREBASE_CLIENT_NAME,
   isFirebaseConfigured,
 } from "@/lib/firebase";
+import { isSigningOut } from "@/lib/sign-out-flag";
 
 function isAlreadyLinkedError(err: unknown): boolean {
   const msg =
@@ -32,6 +33,7 @@ export default function FirebaseAuthSync() {
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        if (isSigningOut()) return;
         // Skip if already signed into InstantDB with the same email (avoids duplicate link)
         if (instantUser?.email === firebaseUser.email) return;
 

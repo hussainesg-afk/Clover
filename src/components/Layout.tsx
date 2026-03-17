@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { db } from "@/lib/db";
 import { getFirebaseAuth } from "@/lib/firebase";
+import { setSigningOut } from "@/lib/sign-out-flag";
 import FirebaseAuthSync from "@/components/FirebaseAuthSync";
 import CloverIcon from "@/components/CloverIcon";
 
@@ -132,6 +134,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = db.useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   return (
     <div className="min-h-screen bg-stone-100 clover-pattern">
@@ -186,19 +189,29 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
                 </span>
                 <button
                   onClick={async () => {
-                    const firebaseAuth = getFirebaseAuth();
-                    if (firebaseAuth) {
-                      try {
-                        await signOut(firebaseAuth);
-                      } catch {
-                        // Ignore if not signed into Firebase
+                    if (isSigningOut) return;
+                    setIsSigningOut(true);
+                    setSigningOut(true);
+                    try {
+                      const firebaseAuth = getFirebaseAuth();
+                      if (firebaseAuth) {
+                        try {
+                          await signOut(firebaseAuth);
+                        } catch {
+                          // Ignore if not signed into Firebase
+                        }
                       }
+                      await db.auth.signOut();
+                      router.refresh();
+                    } finally {
+                      setIsSigningOut(false);
+                      setSigningOut(false);
                     }
-                    db.auth.signOut();
                   }}
-                  className="rounded-2xl border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-600 shadow-sm transition hover:border-amber-200 hover:bg-amber-50/50 hover:text-stone-900"
+                  disabled={isSigningOut}
+                  className="rounded-2xl border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-600 shadow-sm transition hover:border-amber-200 hover:bg-amber-50/50 hover:text-stone-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                 >
-                  Sign out
+                  {isSigningOut ? "Signing out..." : "Sign out"}
                 </button>
               </>
             ) : (
