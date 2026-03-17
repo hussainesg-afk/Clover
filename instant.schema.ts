@@ -94,6 +94,21 @@ const _schema = i.schema({
       category: i.string().optional(),
       postCode: i.string().optional(),
     }),
+    friend_requests: i.entity({
+      fromId: i.string(),
+      toId: i.string(),
+      status: i.string(),
+      createdAt: i.number(),
+    }),
+    group_memberships: i.entity({
+      userId: i.string(),
+      groupName: i.string(),
+    }),
+    user_locations: i.entity({
+      userId: i.string(),
+      lat: i.number(),
+      lng: i.number(),
+    }),
   },
   links: {
     postAuthor: {
@@ -103,6 +118,22 @@ const _schema = i.schema({
     postUpvotes: {
       forward: { on: "voice_posts", has: "many", label: "upvotedBy" },
       reverse: { on: "$users", has: "many", label: "upvotedPosts" },
+    },
+    friendRequestFrom: {
+      forward: { on: "friend_requests", has: "one", label: "from" },
+      reverse: { on: "$users", has: "many", label: "sentFriendRequests" },
+    },
+    friendRequestTo: {
+      forward: { on: "friend_requests", has: "one", label: "to" },
+      reverse: { on: "$users", has: "many", label: "receivedFriendRequests" },
+    },
+    groupMembershipUser: {
+      forward: { on: "group_memberships", has: "one", label: "user" },
+      reverse: { on: "$users", has: "many", label: "groupMemberships" },
+    },
+    userLocationUser: {
+      forward: { on: "user_locations", has: "one", label: "user" },
+      reverse: { on: "$users", has: "many", label: "userLocation" },
     },
   },
 });

@@ -9,6 +9,7 @@ import {
 } from "./filter-mapping";
 import { normalizeEvent, type NormalizedEvent } from "@/lib/event-normalizer";
 import { parseEventDateTime } from "@/lib/parse-event-date";
+import { haversineDistanceMiles } from "@/lib/geo";
 
 export interface QuestionnaireResponse {
   questionId: string;
@@ -35,26 +36,6 @@ export interface FilterDebugInfo {
   /** "perfect" = all filters matched; "close" = fallback to best partial matches */
   matchMode: "perfect" | "close";
   matches: EventMatchDebug[];
-}
-
-/** Haversine distance in miles between two lat/lng points */
-function haversineDistanceMiles(
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number
-): number {
-  const R = 3959; // Earth radius in miles
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLng = ((lng2 - lng1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
 }
 
 const ONLINE_KEYWORDS = ["online", "virtual", "zoom", "teams"];

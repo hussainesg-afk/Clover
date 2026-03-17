@@ -4,6 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthGate from "@/components/AuthGate";
 
+function FriendsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
 function GroupsIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -36,6 +47,7 @@ function MessagesIcon({ className }: { className?: string }) {
 }
 
 const tabs = [
+  { href: "/social/friends", label: "Friends", icon: FriendsIcon },
   { href: "/social/groups", label: "Your Groups", icon: GroupsIcon },
   { href: "/social/neighbours", label: "Neighbours", icon: NeighboursIcon },
   { href: "/social/messages", label: "Messages", icon: MessagesIcon },

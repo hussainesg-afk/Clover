@@ -54,6 +54,30 @@ const rules = {
       email: "auth.id == data.id",
     },
   },
+  friend_requests: {
+    allow: {
+      view: "auth.id == data.fromId || auth.id == data.toId",
+      create: "auth.id == data.fromId",
+      update: "auth.id == data.toId",
+      delete: "auth.id == data.fromId || auth.id == data.toId",
+    },
+  },
+  group_memberships: {
+    allow: {
+      view: "auth.id != null",
+      create: "auth.id == data.userId",
+      update: "auth.id == data.userId",
+      delete: "auth.id == data.userId",
+    },
+  },
+  user_locations: {
+    allow: {
+      view: "auth.id != null",
+      create: "auth.id == data.userId",
+      update: "auth.id == data.userId",
+      delete: "auth.id == data.userId",
+    },
+  },
 } satisfies InstantRules;
 
 export default rules;

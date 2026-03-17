@@ -39,12 +39,16 @@ function buildAnswersFromResponses(responses: ResponseRow[]): Record<string, str
   return answers;
 }
 
+type UserLocationRow = { id: string; userId: string; lat: number; lng: number };
+
 function QuestionnaireFormInner({
   userId,
   myResponses,
+  myUserLocation,
 }: {
   userId: string;
   myResponses: ResponseRow[];
+  myUserLocation: UserLocationRow | null;
 }) {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>(() =>
     buildAnswersFromResponses(myResponses)
@@ -107,7 +111,20 @@ function QuestionnaireFormInner({
       return db.tx.questionnaire_responses[id()].update(payload);
     });
 
-    const tx = [...deleteTxs, ...insertTxs];
+    const locationTxs = [
+      ...(myUserLocation ? [db.tx.user_locations[myUserLocation.id].delete()] : []),
+      ...(postcodeCoords
+        ? [
+            db.tx.user_locations[id()].update({
+              userId,
+              lat: postcodeCoords.lat,
+              lng: postcodeCoords.lng,
+            }),
+          ]
+        : []),
+    ];
+
+    const tx = [...deleteTxs, ...insertTxs, ...locationTxs];
     if (tx.length > 0) {
       await db.transact(tx);
     }
@@ -120,7 +137,9 @@ function QuestionnaireFormInner({
     if (!confirm("Are you sure? This will delete all your answers and you'll need to complete the questionnaire again.")) return;
     setResetting(true);
     const deleteTxs = myResponses.map((r) => db.tx.questionnaire_responses[r.id].delete());
-    if (deleteTxs.length > 0) await db.transact(deleteTxs);
+    const locationTxs = myUserLocation ? [db.tx.user_locations[myUserLocation.id].delete()] : [];
+    const tx = [...deleteTxs, ...locationTxs];
+    if (tx.length > 0) await db.transact(tx);
     setAnswers({});
     setCurrentIndex(0);
     setResetting(false);
@@ -332,8 +351,11 @@ function QuestionnaireForm() {
   const user = db.useUser();
   const userId = user?.id;
   const { data: responsesData } = db.useQuery({ questionnaire_responses: {} });
+  const { data: locationsData } = db.useQuery({ user_locations: {} });
   const existingResponses = (responsesData?.questionnaire_responses ?? []) as ResponseRow[];
   const myResponses = existingResponses.filter((r) => r.userId === userId);
+  const allLocations = (locationsData?.user_locations ?? []) as UserLocationRow[];
+  const myUserLocation = allLocations.find((l) => l.userId === userId) ?? null;
 
   if (!userId) {
     return (
@@ -348,6 +370,7 @@ function QuestionnaireForm() {
       key={myResponses.length > 0 ? "has-responses" : "no-responses"}
       userId={userId}
       myResponses={myResponses}
+      myUserLocation={myUserLocation}
     />
   );
 }
