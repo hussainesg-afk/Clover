@@ -107,6 +107,12 @@ function AddEventFormInner({ userId }: { userId: string }) {
 
   const currentVal = answers[q.id] ?? "";
 
+  const TEXT_PLACEHOLDERS: Record<string, string> = {
+    description: "e.g. A fun community coffee morning...",
+    startDateTime: "e.g. 15 Mar 2025, 2pm",
+    postCode: "e.g. BS1 2AB",
+  };
+
   return (
     <div>
       <Link
@@ -158,13 +164,7 @@ function AddEventFormInner({ userId }: { userId: string }) {
                 <textarea
                   value={currentVal}
                   onChange={(e) => handleTextChange(q.id, e.target.value)}
-                  placeholder={
-                    q.id === "startDateTime"
-                      ? "e.g. 15 Mar 2025, 2pm"
-                      : q.id === "postCode"
-                        ? "e.g. BS1 2AB"
-                        : undefined
-                  }
+                  placeholder={TEXT_PLACEHOLDERS[q.id]}
                   rows={4}
                   className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-700 placeholder:text-stone-400 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
@@ -173,13 +173,7 @@ function AddEventFormInner({ userId }: { userId: string }) {
                   type="text"
                   value={currentVal}
                   onChange={(e) => handleTextChange(q.id, e.target.value)}
-                  placeholder={
-                    q.id === "startDateTime"
-                      ? "e.g. 15 Mar 2025, 2pm"
-                      : q.id === "postCode"
-                        ? "e.g. BS1 2AB"
-                        : undefined
-                  }
+                  placeholder={TEXT_PLACEHOLDERS[q.id]}
                   className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-700 placeholder:text-stone-400 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               )
