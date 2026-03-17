@@ -38,6 +38,9 @@ const rules = {
       create: "auth.id != null",
       update: "auth.id == data.ref('author.id')",
       delete: "auth.id == data.ref('author.id')",
+      link: {
+        upvotedBy: "auth.id != null && auth.id == linkedData.id",
+      },
     },
   },
   $users: {
