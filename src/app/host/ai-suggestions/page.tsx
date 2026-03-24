@@ -203,8 +203,19 @@ function AISuggestionsContent() {
         body: JSON.stringify({ hostId }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Request failed");
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          hint?: string;
+          missingEnv?: string[];
+        };
+        const parts = [
+          data.error,
+          data.hint,
+          data.missingEnv?.length
+            ? `Missing: ${data.missingEnv.join(", ")}`
+            : null,
+        ].filter(Boolean);
+        throw new Error(parts.join(" ") || "Request failed");
       }
       const data = await res.json();
       setSuggestions(data.suggestions ?? []);

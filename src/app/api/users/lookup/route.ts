@@ -2,6 +2,7 @@ import { join } from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { getApps, getApp, initializeApp, cert, type ServiceAccount } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { getInstantAppIdForServer, getInstantAdminToken } from "@/lib/instant-server-env";
 
 const INSTANT_API = "https://api.instantdb.com";
 
@@ -41,8 +42,8 @@ function getFirebaseAdminApp() {
 }
 
 async function lookupByInstantDB(email: string): Promise<{ uid: string; displayName?: string } | null> {
-  const appId = process.env.NEXT_PUBLIC_INSTANT_APP_ID;
-  const adminToken = process.env.INSTANT_APP_ADMIN_TOKEN;
+  const appId = getInstantAppIdForServer();
+  const adminToken = getInstantAdminToken();
   if (!appId || !adminToken) return null;
 
   try {

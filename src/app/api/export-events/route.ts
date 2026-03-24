@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { init } from "@instantdb/admin";
 import * as XLSX from "xlsx";
+import { getInstantAppIdForServer, getInstantAdminToken } from "@/lib/instant-server-env";
 
 const EXCEL_HEADERS = [
   "Title",
@@ -70,8 +71,8 @@ function eventToRow(e: DbEvent): string[] {
 }
 
 export async function GET() {
-  const appId = process.env.NEXT_PUBLIC_INSTANT_APP_ID;
-  const adminToken = process.env.INSTANT_APP_ADMIN_TOKEN;
+  const appId = getInstantAppIdForServer();
+  const adminToken = getInstantAdminToken();
 
   if (!appId || !adminToken) {
     return NextResponse.json(

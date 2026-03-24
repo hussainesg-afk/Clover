@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { init } from "@instantdb/admin";
 import Anthropic from "@anthropic-ai/sdk";
+import { getInstantAppIdForServer, getInstantAdminToken } from "@/lib/instant-server-env";
 
 export interface AISuggestion {
   title: string;
@@ -719,13 +720,21 @@ function buildFallbackSuggestions(
 /* ================================================================== */
 
 export async function POST(req: NextRequest) {
-  const appId = process.env.NEXT_PUBLIC_INSTANT_APP_ID;
-  const adminToken = process.env.INSTANT_APP_ADMIN_TOKEN;
+  const appId = getInstantAppIdForServer();
+  const adminToken = getInstantAdminToken();
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
   if (!appId || !adminToken) {
+    const missing: string[] = [];
+    if (!appId) missing.push("NEXT_PUBLIC_INSTANT_APP_ID (or INSTANT_APP_ID)");
+    if (!adminToken) missing.push("INSTANT_APP_ADMIN_TOKEN");
     return NextResponse.json(
-      { error: "InstantDB not configured" },
+      {
+        error: "Database connection is not configured on the server.",
+        missingEnv: missing,
+        hint:
+          "In Vercel: Project Settings > Environment Variables, add these for Production (and Preview if needed), then Redeploy. Copy values from your local .env.local. INSTANT_APP_ADMIN_TOKEN is required for this API; get it from the InstantDB dashboard.",
+      },
       { status: 503 },
     );
   }

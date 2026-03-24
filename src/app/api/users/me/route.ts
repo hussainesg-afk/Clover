@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getInstantAppIdForServer, getInstantAdminToken } from "@/lib/instant-server-env";
 
 const INSTANT_API = "https://api.instantdb.com";
 
@@ -8,8 +9,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing id parameter" }, { status: 400 });
   }
 
-  const appId = process.env.NEXT_PUBLIC_INSTANT_APP_ID;
-  const adminToken = process.env.INSTANT_APP_ADMIN_TOKEN;
+  const appId = getInstantAppIdForServer();
+  const adminToken = getInstantAdminToken();
   if (!appId || !adminToken) {
     return NextResponse.json({ error: "Server not configured" }, { status: 503 });
   }
