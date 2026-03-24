@@ -1,0 +1,382 @@
+[
+  {
+    "id": "t1",
+    "q": "What is the capital of France?",
+    "options": ["London", "Paris", "Berlin", "Madrid"],
+    "correct": 1
+  },
+  {
+    "id": "t2",
+    "q": "How many sides does a hexagon have?",
+    "options": ["5", "6", "7", "8"],
+    "correct": 1
+  },
+  {
+    "id": "t3",
+    "q": "Which planet is known as the Red Planet?",
+    "options": ["Venus", "Jupiter", "Mars", "Saturn"],
+    "correct": 2
+  },
+  {
+    "id": "t4",
+    "q": "What is H2O commonly known as?",
+    "options": ["Salt", "Water", "Oxygen", "Hydrogen"],
+    "correct": 1
+  },
+  {
+    "id": "t5",
+    "q": "In which year did the first moon landing occur?",
+    "options": ["1967", "1969", "1971", "1973"],
+    "correct": 1
+  },
+  {
+    "id": "t6",
+    "q": "What is the largest mammal in the world?",
+    "options": ["Elephant", "Blue whale", "Giraffe", "Orca"],
+    "correct": 1
+  },
+  {
+    "id": "t7",
+    "q": "Which chess piece moves diagonally only?",
+    "options": ["Rook", "Knight", "Bishop", "Pawn"],
+    "correct": 2
+  },
+  {
+    "id": "t8",
+    "q": "What does CPU stand for?",
+    "options": [
+      "Central Processing Unit",
+      "Computer Personal Unit",
+      "Core Processing Utility",
+      "Central Program Utility"
+    ],
+    "correct": 0
+  },
+  {
+    "id": "t9",
+    "q": "Which ocean is the largest?",
+    "options": ["Atlantic", "Indian", "Arctic", "Pacific"],
+    "correct": 3
+  },
+  {
+    "id": "t10",
+    "q": "How many players are on a football (soccer) team on the pitch?",
+    "options": ["9", "10", "11", "12"],
+    "correct": 2
+  },
+  {
+    "id": "t11",
+    "q": "What is the smallest prime number?",
+    "options": ["0", "1", "2", "3"],
+    "correct": 2
+  },
+  {
+    "id": "t12",
+    "q": "Which country is home to the kangaroo?",
+    "options": ["New Zealand", "Australia", "South Africa", "India"],
+    "correct": 1
+  },
+  {
+    "id": "t13",
+    "q": "What is the speed of light approximately?",
+    "options": ["300,000 km/s", "150,000 km/s", "450,000 km/s", "100,000 km/s"],
+    "correct": 0
+  },
+  {
+    "id": "t14",
+    "q": "Who painted the Mona Lisa?",
+    "options": ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"],
+    "correct": 1
+  },
+  {
+    "id": "t15",
+    "q": "What is the chemical symbol for gold?",
+    "options": ["Go", "Gd", "Au", "Ag"],
+    "correct": 2
+  },
+  {
+    "id": "t16",
+    "q": "Which language has the most native speakers worldwide?",
+    "options": ["English", "Spanish", "Mandarin Chinese", "Hindi"],
+    "correct": 2
+  },
+  {
+    "id": "t17",
+    "q": "What is the hardest natural substance on Earth?",
+    "options": ["Steel", "Diamond", "Granite", "Titanium"],
+    "correct": 1
+  },
+  {
+    "id": "t18",
+    "q": "How many continents are there?",
+    "options": ["5", "6", "7", "8"],
+    "correct": 2
+  },
+  {
+    "id": "t19",
+    "q": "What is the main component of the sun?",
+    "options": ["Liquid lava", "Hydrogen plasma", "Solid iron", "Oxygen gas"],
+    "correct": 1
+  },
+  {
+    "id": "t20",
+    "q": "Which Shakespeare play features a character named Juliet?",
+    "options": ["Hamlet", "Macbeth", "Romeo and Juliet", "Othello"],
+    "correct": 2
+  },
+  {
+    "id": "t21",
+    "q": "What is the square root of 64?",
+    "options": ["6", "7", "8", "9"],
+    "correct": 2
+  },
+  {
+    "id": "t22",
+    "q": "Which gas do plants absorb from the atmosphere?",
+    "options": ["Oxygen", "Nitrogen", "Carbon dioxide", "Helium"],
+    "correct": 2
+  },
+  {
+    "id": "t23",
+    "q": "What is the longest river in the world?",
+    "options": ["Amazon", "Nile", "Yangtze", "Mississippi"],
+    "correct": 1
+  },
+  {
+    "id": "t24",
+    "q": "How many bones are in the adult human body?",
+    "options": ["186", "206", "226", "246"],
+    "correct": 1
+  },
+  {
+    "id": "t25",
+    "q": "What does USB stand for?",
+    "options": [
+      "Universal Serial Bus",
+      "United System Bridge",
+      "Ultra Speed Bandwidth",
+      "Universal System Buffer"
+    ],
+    "correct": 0
+  },
+  {
+    "id": "t26",
+    "q": "Which planet has the most moons?",
+    "options": ["Jupiter", "Saturn", "Uranus", "Neptune"],
+    "correct": 1
+  },
+  {
+    "id": "t27",
+    "q": "What is the capital of Japan?",
+    "options": ["Seoul", "Beijing", "Tokyo", "Bangkok"],
+    "correct": 2
+  },
+  {
+    "id": "t28",
+    "q": "In computing, what does HTML stand for?",
+    "options": [
+      "HyperText Markup Language",
+      "High Transfer Machine Link",
+      "Home Tool Markup Layer",
+      "Hyperlink Text Mode List"
+    ],
+    "correct": 0
+  },
+  {
+    "id": "t29",
+    "q": "Which vitamin is produced when the skin is exposed to sunlight?",
+    "options": ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin K"],
+    "correct": 2
+  },
+  {
+    "id": "t30",
+    "q": "What is the freezing point of water in Celsius?",
+    "options": ["-10", "0", "32", "100"],
+    "correct": 1
+  },
+  {
+    "id": "t31",
+    "q": "Who wrote 'Pride and Prejudice'?",
+    "options": ["Charlotte Bronte", "Jane Austen", "Emily Dickinson", "Mary Shelley"],
+    "correct": 1
+  },
+  {
+    "id": "t32",
+    "q": "What is the largest organ in the human body?",
+    "options": ["Heart", "Liver", "Skin", "Lungs"],
+    "correct": 2
+  },
+  {
+    "id": "t33",
+    "q": "Which metal is liquid at room temperature?",
+    "options": ["Iron", "Mercury", "Copper", "Zinc"],
+    "correct": 1
+  },
+  {
+    "id": "t34",
+    "q": "What is the capital of Canada?",
+    "options": ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+    "correct": 2
+  },
+  {
+    "id": "t35",
+    "q": "How many strings does a standard guitar have?",
+    "options": ["4", "5", "6", "7"],
+    "correct": 2
+  },
+  {
+    "id": "t36",
+    "q": "What is the smallest country in the world by area?",
+    "options": ["Monaco", "Vatican City", "Malta", "San Marino"],
+    "correct": 1
+  },
+  {
+    "id": "t37",
+    "q": "Which element has the chemical symbol O?",
+    "options": ["Gold", "Osmium", "Oxygen", "Oganesson"],
+    "correct": 2
+  },
+  {
+    "id": "t38",
+    "q": "What is the name of the galaxy that contains our solar system?",
+    "options": ["Andromeda", "Milky Way", "Sombrero", "Whirlpool"],
+    "correct": 1
+  },
+  {
+    "id": "t39",
+    "q": "How many sides does a dodecagon have?",
+    "options": ["10", "11", "12", "13"],
+    "correct": 2
+  },
+  {
+    "id": "t40",
+    "q": "What is the boiling point of water in Celsius at sea level?",
+    "options": ["90", "100", "110", "120"],
+    "correct": 1
+  },
+  {
+    "id": "t41",
+    "q": "Which planet is closest to the Sun?",
+    "options": ["Venus", "Mercury", "Earth", "Mars"],
+    "correct": 1
+  },
+  {
+    "id": "t42",
+    "q": "What is the largest desert in the world?",
+    "options": ["Gobi", "Sahara", "Antarctic", "Arabian"],
+    "correct": 2
+  },
+  {
+    "id": "t43",
+    "q": "In which year did World War II end?",
+    "options": ["1943", "1944", "1945", "1946"],
+    "correct": 2
+  },
+  {
+    "id": "t44",
+    "q": "What is the capital of Egypt?",
+    "options": ["Alexandria", "Cairo", "Giza", "Luxor"],
+    "correct": 1
+  },
+  {
+    "id": "t45",
+    "q": "How many legs does a spider have?",
+    "options": ["6", "8", "10", "12"],
+    "correct": 1
+  },
+  {
+    "id": "t46",
+    "q": "What is the currency of Japan?",
+    "options": ["Yuan", "Won", "Yen", "Ringgit"],
+    "correct": 2
+  },
+  {
+    "id": "t47",
+    "q": "Which planet is known for its rings?",
+    "options": ["Jupiter", "Saturn", "Uranus", "Neptune"],
+    "correct": 1
+  },
+  {
+    "id": "t48",
+    "q": "What is the largest island in the world?",
+    "options": ["Australia", "Greenland", "New Guinea", "Borneo"],
+    "correct": 1
+  },
+  {
+    "id": "t49",
+    "q": "What does PDF stand for?",
+    "options": [
+      "Portable Document Format",
+      "Printable Data File",
+      "Public Document Form",
+      "Portable Data File"
+    ],
+    "correct": 0
+  },
+  {
+    "id": "t50",
+    "q": "How many minutes are in a full day?",
+    "options": ["1240", "1380", "1440", "1500"],
+    "correct": 2
+  },
+  {
+    "id": "t51",
+    "q": "What is the capital of Brazil?",
+    "options": ["Rio de Janeiro", "Sao Paulo", "Brasilia", "Salvador"],
+    "correct": 2
+  },
+  {
+    "id": "t52",
+    "q": "Which gas makes up most of Earth's atmosphere?",
+    "options": ["Oxygen", "Carbon dioxide", "Nitrogen", "Argon"],
+    "correct": 2
+  },
+  {
+    "id": "t53",
+    "q": "What is 15 squared?",
+    "options": ["125", "215", "225", "235"],
+    "correct": 2
+  },
+  {
+    "id": "t54",
+    "q": "Who painted 'Starry Night'?",
+    "options": ["Picasso", "Van Gogh", "Monet", "Dali"],
+    "correct": 1
+  },
+  {
+    "id": "t55",
+    "q": "What is the tallest mountain above sea level?",
+    "options": ["K2", "Kangchenjunga", "Mount Everest", "Lhotse"],
+    "correct": 2
+  },
+  {
+    "id": "t56",
+    "q": "How many hearts does an octopus have?",
+    "options": ["1", "2", "3", "4"],
+    "correct": 2
+  },
+  {
+    "id": "t57",
+    "q": "What is the capital of Australia?",
+    "options": ["Sydney", "Melbourne", "Canberra", "Perth"],
+    "correct": 2
+  },
+  {
+    "id": "t58",
+    "q": "Which programming language shares its name with a snake?",
+    "options": ["Java", "Ruby", "Python", "Swift"],
+    "correct": 2
+  },
+  {
+    "id": "t59",
+    "q": "What is the main ingredient in guacamole?",
+    "options": ["Tomato", "Avocado", "Pepper", "Onion"],
+    "correct": 1
+  },
+  {
+    "id": "t60",
+    "q": "How many sides does a pentagon have?",
+    "options": ["4", "5", "6", "7"],
+    "correct": 1
+  }
+]

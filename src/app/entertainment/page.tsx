@@ -6,6 +6,7 @@ const dailyChallenges = [
   {
     name: "Memory Match",
     color: "#EE6A2B",
+    href: "/entertainment/memory-match",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <rect x="4" y="4" width="6" height="8" rx="1" />
@@ -18,6 +19,7 @@ const dailyChallenges = [
   {
     name: "Word Link",
     color: "#8A4CB5",
+    href: "/entertainment/word-link",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
@@ -28,6 +30,7 @@ const dailyChallenges = [
   {
     name: "Number Path",
     color: "#1D8075",
+    href: "/entertainment/number-path",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -54,6 +57,7 @@ const endlessPuzzles = [
   {
     name: "Word Search",
     color: "#E6295C",
+    href: "/entertainment/word-search",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <path d="M4 4h4v4H4z" />
@@ -83,6 +87,7 @@ const endlessPuzzles = [
   {
     name: "Spot the Difference",
     color: "#A6CC00",
+    href: "/entertainment/spot-the-difference",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <rect x="2" y="6" width="8" height="12" rx="1" />
@@ -119,6 +124,7 @@ const playAgainst = [
   {
     name: "Checkers",
     color: "#3333FF",
+    href: "/entertainment/checkers",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <rect x="2" y="2" width="20" height="20" rx="1" />
@@ -132,6 +138,7 @@ const playAgainst = [
   {
     name: "Word Battle",
     color: "#6A0DAD",
+    href: "/entertainment/word-battle",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <rect x="3" y="6" width="6" height="12" rx="1" />
@@ -143,6 +150,7 @@ const playAgainst = [
   {
     name: "Trivia Duel",
     color: "#FFD700",
+    href: "/entertainment/trivia-duel",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-20 w-20">
         <circle cx="12" cy="12" r="10" />
@@ -449,6 +457,7 @@ export default function EntertainmentPage() {
               name={game.name}
               color={game.color}
               icon={game.icon}
+              href={"href" in game ? game.href : undefined}
             />
           ))}
         </div>

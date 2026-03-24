@@ -49,3 +49,4 @@ node_modules/
 firebase-service-account.json
 *-firebase-adminsdk-*.json
 .cursor/debug*.log
+.env*.local
