@@ -82,6 +82,27 @@ export default function HostPage() {
       {/* Card grid - similar to community but host-focused */}
       <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Link
+          href="/host/ai-suggestions"
+          className="group flex flex-col rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 p-5 text-white shadow-lg transition hover:shadow-xl sm:col-span-2"
+        >
+          <span className="text-xs font-medium uppercase tracking-wider text-white/70">AI Powered</span>
+          <h3 className="mt-1 text-xl font-bold">AI Event Suggestions</h3>
+          <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
+            Get smart event recommendations based on what your community is asking for. Manage quiet slots and let AI match demand to your venue.
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20">
+              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">
+              →
+            </span>
+          </div>
+        </Link>
+
+        <Link
           href="/host/add-event"
           className="group flex flex-col rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 p-5 text-white shadow-lg transition hover:shadow-xl"
         >
@@ -150,7 +171,7 @@ export default function HostPage() {
 
         <Link
           href="/host/your-voice"
-          className="group flex flex-col rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-5 text-white shadow-lg transition hover:shadow-xl sm:col-span-2"
+          className="group flex flex-col rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-5 text-white shadow-lg transition hover:shadow-xl"
         >
           <span className="text-xs font-medium uppercase tracking-wider text-white/70">Community</span>
           <h3 className="mt-1 text-xl font-bold">Your Voice</h3>

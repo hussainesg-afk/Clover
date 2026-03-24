@@ -93,12 +93,30 @@ const _schema = i.schema({
       createdAt: i.number().indexed(),
       category: i.string().optional(),
       postCode: i.string().optional(),
+      socialLevel: i.string().optional(),
+      preferredTime: i.string().optional(),
+      groupSize: i.string().optional(),
+    }),
+    voice_post_comments: i.entity({
+      body: i.string(),
+      createdAt: i.number().indexed(),
+    }),
+    quiet_slots: i.entity({
+      hostId: i.string(),
+      date: i.string(),
+      startTime: i.string(),
+      endTime: i.string(),
+      label: i.string().optional(),
+      status: i.string(),
+      createdAt: i.number().indexed(),
     }),
     friend_requests: i.entity({
       fromId: i.string(),
       toId: i.string(),
       status: i.string(),
       createdAt: i.number(),
+      toEmail: i.string().optional(),
+      fromEmail: i.string().optional(),
     }),
     group_memberships: i.entity({
       userId: i.string(),
@@ -129,6 +147,14 @@ const _schema = i.schema({
     postUpvotes: {
       forward: { on: "voice_posts", has: "many", label: "upvotedBy" },
       reverse: { on: "$users", has: "many", label: "upvotedPosts" },
+    },
+    postComment: {
+      forward: { on: "voice_post_comments", has: "one", label: "post" },
+      reverse: { on: "voice_posts", has: "many", label: "comments" },
+    },
+    commentAuthor: {
+      forward: { on: "voice_post_comments", has: "one", label: "author" },
+      reverse: { on: "$users", has: "many", label: "voicePostComments" },
     },
     friendRequestFrom: {
       forward: { on: "friend_requests", has: "one", label: "from" },
@@ -161,6 +187,14 @@ const _schema = i.schema({
     messageSender: {
       forward: { on: "messages", has: "one", label: "sender" },
       reverse: { on: "$users", has: "many", label: "sentMessages" },
+    },
+    eventLikes: {
+      forward: { on: "events", has: "many", label: "likedBy" },
+      reverse: { on: "$users", has: "many", label: "likedEvents" },
+    },
+    quietSlotHost: {
+      forward: { on: "quiet_slots", has: "one", label: "host" },
+      reverse: { on: "$users", has: "many", label: "quietSlots" },
     },
   },
 });

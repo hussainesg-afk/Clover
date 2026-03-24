@@ -13,14 +13,19 @@ import AuthGate from "@/components/AuthGate";
 function BrowseContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { isLoading, error, data } = db.useQuery({ events: {} });
+  const user = db.useUser();
+  const { isLoading, error, data } = db.useQuery({ events: { likedBy: {} } });
 
   const rawEvents = data?.events ?? [];
   const events = useMemo(
     () =>
-      rawEvents.map((raw: Record<string, unknown>) =>
-        normalizeEvent(raw)
-      ) as Event[],
+      rawEvents.map((raw: Record<string, unknown>) => {
+        const normalized = normalizeEvent(raw) as Event;
+        if (Array.isArray((raw as Record<string, unknown>).likedBy)) {
+          normalized.likedBy = (raw as Record<string, unknown>).likedBy as { id: string }[];
+        }
+        return normalized;
+      }),
     [rawEvents]
   );
   const filteredEvents = filterEventsBySearch(events, searchQuery);
@@ -81,6 +86,7 @@ function BrowseContent() {
               key={event.id}
               event={event}
               onEventClick={setSelectedEvent}
+              currentUserId={user?.id ?? null}
             />
           ))
         )}

@@ -16,7 +16,7 @@ function TopPicksContent() {
   const user = db.useUser();
   const userId = user?.id;
 
-  const { isLoading: eventsLoading, data: eventsData } = db.useQuery({ events: {} });
+  const { isLoading: eventsLoading, data: eventsData } = db.useQuery({ events: { likedBy: {} } });
   const { isLoading: responsesLoading, data: responsesData } = db.useQuery({
     questionnaire_responses: {},
   });
@@ -148,6 +148,7 @@ function TopPicksContent() {
             key={event.id}
             event={event}
             onEventClick={setSelectedEvent}
+            currentUserId={user?.id ?? null}
           />
         ))}
       </div>

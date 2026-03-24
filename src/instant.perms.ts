@@ -9,6 +9,12 @@ const rules = {
       create: "auth.id != null",
       update: "auth.id != null && (data.organizerId == null || data.organizerId == auth.id)",
       delete: "auth.id != null && (data.organizerId == null || data.organizerId == auth.id)",
+      link: {
+        likedBy: "auth.id != null && auth.id == linkedData.id",
+      },
+      unlink: {
+        likedBy: "auth.id != null && auth.id == linkedData.id",
+      },
     },
   },
   solo_events: {
@@ -40,9 +46,27 @@ const rules = {
       delete: "auth.id == data.ref('author.id')",
       link: {
         upvotedBy: "auth.id != null && auth.id == linkedData.id",
+        comments: "auth.id != null",
       },
       unlink: {
         upvotedBy: "auth.id != null && auth.id == linkedData.id",
+        comments: "auth.id == data.ref('comments.author.id')",
+      },
+    },
+  },
+  voice_post_comments: {
+    allow: {
+      view: "true",
+      create: "auth.id != null",
+      update: "auth.id == data.ref('author.id')",
+      delete: "auth.id == data.ref('author.id')",
+      link: {
+        author: "auth.id != null && linkedData.id == auth.id",
+        post: "auth.id != null",
+      },
+      unlink: {
+        author: "auth.id == data.ref('author.id')",
+        post: "auth.id == data.ref('author.id')",
       },
     },
   },
@@ -58,7 +82,7 @@ const rules = {
     allow: {
       view: "auth.id == data.fromId || auth.id == data.toId",
       create: "auth.id == data.fromId",
-      update: "auth.id == data.toId",
+      update: "auth.id == data.toId || auth.id == data.fromId",
       delete: "auth.id == data.fromId || auth.id == data.toId",
     },
   },
@@ -86,10 +110,18 @@ const rules = {
       delete: "auth.id == data.participant1Id || auth.id == data.participant2Id",
     },
   },
+  quiet_slots: {
+    allow: {
+      view: "true",
+      create: "auth.id != null",
+      update: "auth.id != null && data.hostId == auth.id",
+      delete: "auth.id != null && data.hostId == auth.id",
+    },
+  },
   messages: {
     allow: {
       view:
-        "auth.id == data.ref('conversation.participant1Id') || auth.id == data.ref('conversation.participant2Id')",
+        "auth.id in data.ref('conversation.participant1Id') || auth.id in data.ref('conversation.participant2Id')",
       create: "auth.id == data.senderId",
       update: "auth.id == data.senderId",
       delete: "auth.id == data.senderId",

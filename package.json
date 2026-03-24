@@ -15,6 +15,7 @@
     "db:perms": "npx instant-cli@latest push perms"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@instantdb/admin": "^0.22.155",
     "@instantdb/react": "^0.22.155",
     "@react-google-maps/api": "^2.20.8",

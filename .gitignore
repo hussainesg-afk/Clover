@@ -46,3 +46,6 @@ next-env.d.ts
 node_modules/
 .next/
 .env.local
+firebase-service-account.json
+*-firebase-adminsdk-*.json
+.cursor/debug*.log

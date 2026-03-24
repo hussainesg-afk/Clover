@@ -27,6 +27,16 @@ Discover social and community events near BS3 Bristol. Complete a questionnaire 
      - `NEXT_PUBLIC_FIREBASE_PROJECT_ID` – Project ID
      - `NEXT_PUBLIC_INSTANT_FIREBASE_CLIENT_NAME` – Client name you set in InstantDB (e.g. `clover-firebase`)
 
+3b. **Add friend by email** (required for Social > Friends)
+   - Add `INSTANT_APP_ADMIN_TOKEN` to `.env.local` (get from InstantDB dashboard) – used to look up InstantDB users by email
+   - Optional: Firebase Admin (see below) for users who signed up with Firebase email/password or Google
+
+3c. **Firebase Admin** (optional, for Add friend when user signed up via Firebase)
+   - In Firebase Console: Project settings > Service accounts > Generate new private key
+   - Save the downloaded JSON as `firebase-service-account.json` in the project root (same folder as `package.json`)
+   - Add to `.env.local`: `FIREBASE_SERVICE_ACCOUNT_PATH=firebase-service-account.json`
+   - For Vercel: add `FIREBASE_SERVICE_ACCOUNT` with the minified JSON as the value (file path does not work on serverless)
+
 4. **Google OAuth** (optional, for sign-in with Google)
    - Create an OAuth client at [Google Console](https://console.cloud.google.com/) (Credentials > Create Credentials > OAuth client ID)
    - For Web application: add `http://localhost:3002` (and your production domain) to Authorized JavaScript origins

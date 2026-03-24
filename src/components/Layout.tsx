@@ -23,8 +23,8 @@ const communityNavItems = [
 const hostNavItems = [
   { href: "/host", label: "Home", icon: HomeIcon, color: "text-teal-600" },
   { href: "/host/add-event", label: "Add Event", icon: PlusIcon, color: "text-teal-600" },
+  { href: "/host/ai-suggestions", label: "AI Picks", icon: SparklesIcon, color: "text-teal-600" },
   { href: "/host/my-events", label: "My Events", icon: ListIcon, color: "text-teal-600" },
-  { href: "/host/events", label: "Browse", icon: SearchIcon, color: "text-teal-600" },
   { href: "/host/your-voice", label: "Voice", icon: VoiceIcon, color: "text-teal-600" },
 ];
 

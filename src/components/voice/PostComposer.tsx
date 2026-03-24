@@ -12,6 +12,28 @@ const CATEGORIES = [
   { id: "music", label: "Music" },
 ] as const;
 
+const SOCIAL_LEVELS = [
+  { id: "low", label: "Low interaction" },
+  { id: "moderate", label: "Moderate" },
+  { id: "high", label: "Very social" },
+] as const;
+
+const PREFERRED_TIMES = [
+  { id: "Weekday mornings", label: "Weekday mornings" },
+  { id: "Weekday afternoons", label: "Weekday afternoons" },
+  { id: "Weekday evenings", label: "Weekday evenings" },
+  { id: "Weekend mornings", label: "Weekend mornings" },
+  { id: "Weekend afternoons", label: "Weekend afternoons" },
+  { id: "Weekend evenings", label: "Weekend evenings" },
+] as const;
+
+const GROUP_SIZES = [
+  { id: "1-5", label: "1-5 people" },
+  { id: "5-10", label: "5-10 people" },
+  { id: "10-20", label: "10-20 people" },
+  { id: "20+", label: "20+ people" },
+] as const;
+
 type CategoryId = (typeof CATEGORIES)[number]["id"];
 
 interface PostComposerProps {
@@ -24,6 +46,9 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
   const [body, setBody] = useState("");
   const [category, setCategory] = useState<CategoryId | "">("");
   const [postCode, setPostCode] = useState("");
+  const [socialLevel, setSocialLevel] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
+  const [groupSize, setGroupSize] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,12 +70,18 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
             createdAt: Date.now(),
             category: category && category !== "all" ? category : undefined,
             postCode: postCode.trim() || undefined,
+            socialLevel: socialLevel || undefined,
+            preferredTime: preferredTime || undefined,
+            groupSize: groupSize || undefined,
           })
           .link({ author: userId }),
       ]);
       setBody("");
       setCategory("");
       setPostCode("");
+      setSocialLevel("");
+      setPreferredTime("");
+      setGroupSize("");
       setExpanded(false);
       onPostCreated?.();
     } catch (err) {
@@ -65,6 +96,9 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
     setBody("");
     setCategory("");
     setPostCode("");
+    setSocialLevel("");
+    setPreferredTime("");
+    setGroupSize("");
     setError(null);
   };
 
@@ -88,6 +122,9 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
     );
   }
 
+  const selectClass =
+    "rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-700 focus:border-teal-400 focus:outline-none";
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -102,11 +139,12 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
         disabled={isSubmitting}
         autoFocus
       />
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as CategoryId | "")}
-          className="rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-700 focus:border-teal-400 focus:outline-none"
+          className={selectClass}
         >
           <option value="">Category (optional)</option>
           {CATEGORIES.filter((c) => c.id !== "all").map((c) => (
@@ -115,15 +153,56 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
             </option>
           ))}
         </select>
+
         <input
           type="text"
           value={postCode}
           onChange={(e) => setPostCode(e.target.value)}
-          placeholder="Postcode (optional)"
+          placeholder="Postcode (e.g. BS3 1AB)"
           className="rounded-xl border border-stone-200 px-4 py-2.5 text-sm text-stone-700 placeholder:text-stone-400 focus:border-teal-400 focus:outline-none"
           disabled={isSubmitting}
         />
+
+        <select
+          value={socialLevel}
+          onChange={(e) => setSocialLevel(e.target.value)}
+          className={selectClass}
+        >
+          <option value="">Social level (optional)</option>
+          {SOCIAL_LEVELS.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={preferredTime}
+          onChange={(e) => setPreferredTime(e.target.value)}
+          className={selectClass}
+        >
+          <option value="">Preferred time (optional)</option>
+          {PREFERRED_TIMES.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={groupSize}
+          onChange={(e) => setGroupSize(e.target.value)}
+          className={selectClass}
+        >
+          <option value="">Group size (optional)</option>
+          {GROUP_SIZES.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.label}
+            </option>
+          ))}
+        </select>
       </div>
+
       {error && (
         <p className="mt-3 text-sm text-rose-600">{error}</p>
       )}

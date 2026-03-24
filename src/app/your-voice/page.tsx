@@ -93,6 +93,10 @@ function YourVoiceContent() {
       },
       author: {},
       upvotedBy: {},
+      comments: {
+        $: { order: { createdAt: "asc" } },
+        author: {},
+      },
     },
   });
 

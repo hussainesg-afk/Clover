@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { id as instantId } from "@instantdb/react";
 import { db } from "@/lib/db";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -11,6 +13,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const INTEREST_CAP = 50;
+const MAX_COMMENT_LEN = 2000;
 
 function getInitials(user: { displayName?: string | null; email?: string | null; id?: string } | null): string {
   if (!user) return "??";
@@ -40,6 +43,13 @@ function getDisplayName(user: { displayName?: string | null; email?: string | nu
   return "Anonymous";
 }
 
+export interface VoiceComment {
+  id: string;
+  body: string;
+  createdAt: number;
+  author?: { id: string; displayName?: string | null; email?: string | null } | null;
+}
+
 export interface VoicePost {
   id: string;
   body: string;
@@ -48,6 +58,7 @@ export interface VoicePost {
   postCode?: string | null;
   author?: { id: string; displayName?: string | null; email?: string | null } | null;
   upvotedBy?: { id: string; displayName?: string | null; email?: string | null }[] | null;
+  comments?: VoiceComment[] | null;
 }
 
 interface VoicePostCardProps {
@@ -73,9 +84,15 @@ function ThumbsUpIcon({ filled }: { filled?: boolean }) {
   );
 }
 
-function CommentIcon() {
+function CommentIcon({ active }: { active?: boolean }) {
   return (
-    <svg className="h-5 w-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      className={`h-5 w-5 ${active ? "text-sky-600" : "text-sky-400"}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -98,10 +115,18 @@ function ShareIcon() {
 }
 
 export default function VoicePostCard({ post, currentUserId }: VoicePostCardProps) {
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [submittingComment, setSubmittingComment] = useState(false);
+
   const upvoters = post.upvotedBy ?? [];
   const upvoteCount = upvoters.length;
   const hasUpvoted = currentUserId ? upvoters.some((u) => u.id === currentUserId) : false;
   const progress = Math.min(upvoteCount / INTEREST_CAP, 1);
+
+  const rawComments = post.comments ?? [];
+  const comments = [...rawComments].sort((a, b) => a.createdAt - b.createdAt);
+  const commentCount = comments.length;
 
   const handleUpvote = async () => {
     if (!currentUserId) return;
@@ -113,6 +138,39 @@ export default function VoicePostCard({ post, currentUserId }: VoicePostCardProp
       }
     } catch {
       // Ignore errors for now
+    }
+  };
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUserId) return;
+    const text = draft.trim();
+    if (!text || text.length > MAX_COMMENT_LEN) return;
+    setSubmittingComment(true);
+    try {
+      const commentId = instantId();
+      await db.transact([
+        db.tx.voice_post_comments[commentId]
+          .update({
+            body: text,
+            createdAt: Date.now(),
+          })
+          .link({ post: post.id, author: currentUserId }),
+      ]);
+      setDraft("");
+    } catch {
+      // allow retry
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!currentUserId) return;
+    try {
+      await db.transact(db.tx.voice_post_comments[commentId].delete());
+    } catch {
+      // ignore
     }
   };
 
@@ -192,14 +250,98 @@ export default function VoicePostCard({ post, currentUserId }: VoicePostCardProp
             <ThumbsUpIcon filled={hasUpvoted} />
             <span>{upvoteCount}</span>
           </button>
-          <button type="button" className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100" aria-label="Comment">
-            <CommentIcon />
+          <button
+            type="button"
+            onClick={() => setCommentsOpen((o) => !o)}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+              commentsOpen ? "bg-sky-50 text-sky-800" : "text-stone-500 hover:bg-stone-100 hover:text-stone-700"
+            }`}
+            aria-expanded={commentsOpen}
+            aria-label={commentsOpen ? "Hide comments" : "Show comments"}
+          >
+            <CommentIcon active={commentsOpen} />
+            <span>{commentCount}</span>
           </button>
           <button type="button" className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100" aria-label="Share">
             <ShareIcon />
           </button>
         </div>
       </div>
+
+      {commentsOpen && (
+        <div className="mt-4 border-t border-stone-100 pt-4">
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-500">Comments</h4>
+          {comments.length === 0 ? (
+            <p className="mb-3 text-sm text-stone-500">No comments yet. Be the first to reply.</p>
+          ) : (
+            <ul className="mb-4 space-y-3">
+              {comments.map((c) => {
+                const isOwn = currentUserId && c.author?.id === currentUserId;
+                return (
+                  <li key={c.id} className="rounded-xl bg-stone-50 px-3 py-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex min-w-0 flex-1 gap-2">
+                        <div
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-xs font-medium text-stone-600 ring-1 ring-stone-200"
+                          aria-hidden
+                        >
+                          {getInitials(c.author ?? null)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-stone-800">{getDisplayName(c.author ?? null)}</p>
+                          <p className="text-xs text-stone-400">
+                            {formatDistanceToNow(c.createdAt, { addSuffix: true })}
+                          </p>
+                          <p className="mt-1 text-sm text-stone-700 whitespace-pre-wrap break-words">{c.body}</p>
+                        </div>
+                      </div>
+                      {isOwn && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteComment(c.id)}
+                          className="shrink-0 text-xs font-medium text-stone-400 hover:text-rose-600"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          {currentUserId ? (
+            <form onSubmit={handleSubmitComment} className="space-y-2">
+              <label htmlFor={`comment-${post.id}`} className="sr-only">
+                Write a comment
+              </label>
+              <textarea
+                id={`comment-${post.id}`}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value.slice(0, MAX_COMMENT_LEN))}
+                placeholder="Write a comment..."
+                rows={2}
+                className="w-full resize-y rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs text-stone-400">
+                  {draft.length}/{MAX_COMMENT_LEN}
+                </span>
+                <button
+                  type="submit"
+                  disabled={!draft.trim() || submittingComment}
+                  className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50"
+                >
+                  {submittingComment ? "Posting..." : "Post comment"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <p className="text-sm text-stone-500">Sign in to join the conversation.</p>
+          )}
+        </div>
+      )}
     </article>
   );
 }

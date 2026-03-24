@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
@@ -11,11 +11,14 @@ type FriendRequest = {
   toId: string;
   status: string;
   createdAt: number;
+  toEmail?: string;
+  fromEmail?: string;
 };
 
 type User = {
   id: string;
   displayName?: string;
+  email?: string;
 };
 
 export default function FriendsPage() {
@@ -38,10 +41,16 @@ export default function FriendsPage() {
   const acceptedToMe = requests.filter(
     (r) => r.toId === userId && r.status === "accepted"
   );
-  const friends = [
-    ...acceptedFromMe.map((r) => r.to).filter(Boolean),
-    ...acceptedToMe.map((r) => r.from).filter(Boolean),
-  ] as User[];
+  const friendsRaw = [
+    ...acceptedFromMe.map((r) => ({ req: r, user: r.to, id: r.to?.id ?? r.toId, iSent: true })),
+    ...acceptedToMe.map((r) => ({ req: r, user: r.from, id: r.from?.id ?? r.fromId, iSent: false })),
+  ].filter((x) => x.id);
+  const seen = new Set<string>();
+  const friends = friendsRaw.filter((x) => {
+    if (seen.has(x.id)) return false;
+    seen.add(x.id);
+    return true;
+  });
 
   const pendingIncoming = requests.filter(
     (r) => r.toId === userId && r.status === "pending"
@@ -49,6 +58,35 @@ export default function FriendsPage() {
   const pendingOutgoing = requests.filter(
     (r) => r.fromId === userId && r.status === "pending"
   );
+
+  const backfillDone = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!userId) return;
+    for (const r of [...pendingOutgoing, ...acceptedFromMe]) {
+      if (r.toEmail || !r.toId || backfillDone.current.has(r.id)) continue;
+      backfillDone.current.add(r.id);
+      fetch("/api/users/me?id=" + encodeURIComponent(r.toId))
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: { email?: string } | null) => {
+          if (data?.email) {
+            db.transact([db.tx.friend_requests[r.id].update({ toEmail: data.email })]);
+          }
+        })
+        .catch(() => {});
+    }
+    for (const r of acceptedToMe) {
+      if (r.fromEmail || !r.fromId || backfillDone.current.has(r.id)) continue;
+      backfillDone.current.add(r.id);
+      fetch("/api/users/me?id=" + encodeURIComponent(r.fromId))
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: { email?: string } | null) => {
+          if (data?.email) {
+            db.transact([db.tx.friend_requests[r.id].update({ fromEmail: data.email })]);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [userId, pendingOutgoing, acceptedFromMe, acceptedToMe]);
 
   const handleAddFriend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +100,14 @@ export default function FriendsPage() {
     setSearching(true);
     try {
       const res = await fetch("/api/users/lookup?email=" + encodeURIComponent(email));
-      const json = await res.json();
+      const text = await res.text();
+      let json: { error?: string; uid?: string; displayName?: string };
+      try {
+        json = text ? JSON.parse(text) : {};
+      } catch {
+        setError("Invalid response from server");
+        return;
+      }
       if (!res.ok) {
         setError(json.error ?? "User not found");
         return;
@@ -71,6 +116,16 @@ export default function FriendsPage() {
       if (uid === userId) {
         setError("You cannot add yourself");
         return;
+      }
+      let fromEmail: string | undefined;
+      try {
+        const meRes = await fetch("/api/users/me?id=" + encodeURIComponent(userId));
+        if (meRes.ok) {
+          const meJson = (await meRes.json()) as { email?: string };
+          fromEmail = meJson.email;
+        }
+      } catch {
+        // ignore
       }
       const existing = requests.find(
         (r) =>
@@ -97,6 +152,8 @@ export default function FriendsPage() {
           toId: uid,
           status: "pending",
           createdAt: Date.now(),
+          toEmail: email,
+          fromEmail: fromEmail ?? undefined,
         }),
       ]);
       setEmailInput("");
@@ -120,7 +177,16 @@ export default function FriendsPage() {
     ]);
   };
 
-  const getUserDisplay = (u: User) => u.displayName || "Unknown";
+  const getFriendDisplay = (
+    u: User | undefined,
+    r: { toEmail?: string; fromEmail?: string },
+    isTo: boolean
+  ) => {
+    if (u?.displayName) return u.displayName;
+    const email = isTo ? r.toEmail : r.fromEmail;
+    if (email) return email;
+    return "Unknown";
+  };
 
   if (!userId) {
     return (
@@ -165,9 +231,7 @@ export default function FriendsPage() {
           <h3 className="font-semibold text-stone-800">Pending requests</h3>
           <p className="mt-1 text-sm text-stone-500">People who want to be your friend</p>
           <div className="mt-4 space-y-3">
-            {pendingIncoming.map((r) => {
-              const fromUser = r.from;
-              return (
+            {pendingIncoming.map((r) => (
                 <div
                   key={r.id}
                   className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
@@ -175,7 +239,7 @@ export default function FriendsPage() {
                   <div className="flex items-center gap-3">
                     <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
                     <span className="font-medium text-stone-800">
-                      {fromUser ? getUserDisplay(fromUser) : "Unknown"}
+                      {getFriendDisplay(r.from, r, false)}
                     </span>
                   </div>
                   <div className="flex gap-2">
@@ -195,8 +259,7 @@ export default function FriendsPage() {
                     </button>
                   </div>
                 </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       )}
@@ -206,21 +269,18 @@ export default function FriendsPage() {
           <h3 className="font-semibold text-stone-800">Sent requests</h3>
           <p className="mt-1 text-sm text-stone-500">Waiting for a response</p>
           <div className="mt-4 space-y-3">
-            {pendingOutgoing.map((r) => {
-              const toUser = r.to;
-              return (
+            {pendingOutgoing.map((r) => (
                 <div
                   key={r.id}
                   className="flex items-center gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
                 >
                   <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
                   <span className="font-medium text-stone-800">
-                    {toUser ? getUserDisplay(toUser) : "Unknown"}
+                    {getFriendDisplay(r.to, r, true)}
                   </span>
                   <span className="text-sm text-stone-500">Pending</span>
                 </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       )}
@@ -233,23 +293,29 @@ export default function FriendsPage() {
             : `${friends.length} friend${friends.length === 1 ? "" : "s"}`}
         </p>
         <div className="mt-4 space-y-3">
-          {friends.map((f) => (
-            <div
-              key={f.id}
-              className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
-                <span className="font-medium text-stone-800">{getUserDisplay(f)}</span>
-              </div>
-              <Link
-                href={`/social/messages?with=${f.id}`}
-                className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+          {friends.map(({ req, user, id }) => {
+            const display =
+              user?.displayName ??
+              (req.fromId === userId ? req.toEmail : req.fromEmail) ??
+              "Unknown";
+            return (
+              <div
+                key={id}
+                className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
               >
-                Message
-              </Link>
-            </div>
-          ))}
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
+                  <span className="font-medium text-stone-800">{display}</span>
+                </div>
+                <Link
+                  href={`/social/messages?with=${id}`}
+                  className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+                >
+                  Message
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
