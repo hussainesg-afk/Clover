@@ -16,6 +16,7 @@ const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 const communityNavItems = [
   { href: "/", label: "Home", icon: HomeIcon, color: "text-red-500" },
   { href: "/calendar", label: "Calendar", icon: CalendarIcon, color: "text-amber-500" },
+  { href: "/my-bookings", label: "Bookings", icon: TicketIcon, color: "text-violet-600" },
   { href: "/for-you", label: "For You", icon: SparklesIcon, color: "text-emerald-500" },
   { href: "/your-voice", label: "Your Voice", icon: VoiceIcon, color: "text-emerald-600" },
 ];
@@ -52,6 +53,26 @@ function CalendarIcon({ active, color }: { active?: boolean; color?: string }) {
       strokeWidth={active ? 0 : 2}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+function TicketIcon({ active, color }: { active?: boolean; color?: string }) {
+  const c = active ? (color ?? "text-violet-600") : "text-stone-400";
+  return (
+    <svg
+      className={`h-5 w-5 shrink-0 ${c}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 9a3 3 0 0 1 0 6v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+      <path d="M13 5v2" />
+      <path d="M13 17v2" />
+      <path d="M13 11v2" />
     </svg>
   );
 }
@@ -226,7 +247,9 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className={`mx-auto max-w-5xl px-4 pt-6 ${user ? "pb-32" : "pb-8"}`}>
+      <main
+        className={`mx-auto max-w-5xl min-w-0 px-4 pt-6 ${user ? "pb-32" : "pb-8"} overflow-x-hidden`}
+      >
         {children}
       </main>
 

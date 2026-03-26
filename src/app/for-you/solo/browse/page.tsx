@@ -5,6 +5,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
+import { EVENT_BOOKING_SOURCE_SOLO } from "@/lib/event-bookings";
 import EventSearchBar from "@/components/EventSearchBar";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import { filterEventsBySearch } from "@/lib/filter-events-by-search";
@@ -89,6 +90,7 @@ function SoloBrowseContent() {
         <EventDetailModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          eventSource={EVENT_BOOKING_SOURCE_SOLO}
         />
       )}
     </div>

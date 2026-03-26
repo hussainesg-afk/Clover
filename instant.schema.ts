@@ -131,11 +131,20 @@ const _schema = i.schema({
       participant1Id: i.string(),
       participant2Id: i.string(),
       createdAt: i.number().indexed(),
+      participant1LastReadAt: i.number().optional(),
+      participant2LastReadAt: i.number().optional(),
     }),
     messages: i.entity({
       conversationId: i.string(),
       senderId: i.string(),
       body: i.string(),
+      createdAt: i.number().indexed(),
+    }),
+    event_bookings: i.entity({
+      userId: i.string(),
+      eventId: i.string(),
+      /** "events" | "solo_events" */
+      source: i.string(),
       createdAt: i.number().indexed(),
     }),
   },

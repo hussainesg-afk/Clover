@@ -5,14 +5,16 @@ import AuthGate from "@/components/AuthGate";
 import { db } from "@/lib/db";
 import PostComposer from "@/components/voice/PostComposer";
 import VoicePostCard, { type VoicePost } from "@/components/voice/VoicePostCard";
+import { VOICE_FORUM_SECTIONS, type VoiceForumSectionId } from "@/config/voice-forum-sections.config";
 
-const CATEGORY_FILTERS = [
-  { id: "all", label: "All", icon: "check" },
-  { id: "events", label: "Events", icon: "star" },
-  { id: "meet-up", label: "Meet-up", icon: "people" },
-  { id: "solo", label: "Solo", icon: "smiley" },
-  { id: "music", label: "Music", icon: "headphones" },
-] as const;
+const SECTION_ICONS: Record<VoiceForumSectionId, string> = {
+  all: "check",
+  sports: "sport",
+  events: "star",
+  "meet-up": "people",
+  solo: "smiley",
+  music: "headphones",
+};
 
 function getGreetingName(email: string | null | undefined): string {
   if (!email) return "";
@@ -63,11 +65,21 @@ function HeadphonesIcon({ className }: { className?: string }) {
   );
 }
 
+function SportIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M22 12h-4l-3 9L9 3l-3 9H2" />
+    </svg>
+  );
+}
+
 function FilterIcon({ type }: { type: string }) {
   const iconClass = "h-4 w-4 shrink-0";
   switch (type) {
     case "check":
       return <CheckIcon className={iconClass} />;
+    case "sport":
+      return <SportIcon className={iconClass} />;
     case "star":
       return <StarIcon className={iconClass} />;
     case "people":
@@ -84,7 +96,7 @@ function FilterIcon({ type }: { type: string }) {
 function YourVoiceContent() {
   const user = db.useUser();
   const greetingName = getGreetingName(user?.email);
-  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [activeFilter, setActiveFilter] = useState<VoiceForumSectionId>("all");
 
   const { isLoading, error, data } = db.useQuery({
     voice_posts: {
@@ -114,32 +126,36 @@ function YourVoiceContent() {
           <h1 className="text-2xl font-bold text-stone-900">
             {greetingName ? `Hello, ${greetingName}!` : "Hello!"}
           </h1>
-          <p className="text-sm text-stone-500">Your Voice</p>
+          <p className="text-sm text-stone-500">Community forum</p>
         </div>
       </div>
 
       {user && <PostComposer userId={user.id} />}
 
-      <div className="mb-4 flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-        {CATEGORY_FILTERS.map((filter) => {
-          const isActive = activeFilter === filter.id;
-          return (
-            <button
-              key={filter.id}
-              type="button"
-              onClick={() => setActiveFilter(filter.id)}
-              className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                isActive
-                  ? "bg-stone-900 text-white"
-                  : "bg-white text-stone-700 ring-1 ring-stone-200 hover:bg-stone-50"
-              }`}
-            >
-              <FilterIcon type={filter.icon} />
-              {filter.label}
-            </button>
-          );
-        })}
-      </div>
+      <section className="mb-6" aria-label="Forum sections">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-500">Forum sections</h2>
+        <p className="mt-1 text-sm text-stone-600">Pick a board to read posts in that topic, or stay on all topics.</p>
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {VOICE_FORUM_SECTIONS.map((section) => {
+            const isActive = activeFilter === section.id;
+            return (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveFilter(section.id)}
+                className={`flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+                  isActive
+                    ? "border-stone-900 bg-stone-900 text-white"
+                    : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50"
+                }`}
+              >
+                <FilterIcon type={SECTION_ICONS[section.id]} />
+                {section.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       {isLoading ? (
         <div className="flex min-h-[200px] items-center justify-center rounded-2xl bg-white">
@@ -154,8 +170,8 @@ function YourVoiceContent() {
         <div className="rounded-2xl border-2 border-dashed border-stone-200 bg-white p-12 text-center">
           <p className="font-medium text-stone-600">
             {posts.length === 0
-              ? "No posts yet. Be the first to share something!"
-              : `No posts in this category. Try "All" to see everything.`}
+              ? "No posts yet. Start a thread on any board."
+              : "No posts in this section yet. Try another board or all topics."}
           </p>
         </div>
       ) : (

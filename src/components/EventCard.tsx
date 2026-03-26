@@ -112,7 +112,7 @@ export default function EventCard({ event, onEventClick, currentUserId }: EventC
             )}
             {event.lgbtqFocus && (
               <span className="inline-block rounded-xl bg-rose-100 px-3 py-1 text-xs font-medium text-rose-800">
-                LGBTQ+ focus
+                LGBTQ+
               </span>
             )}
           </div>

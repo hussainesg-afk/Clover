@@ -4,8 +4,10 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { id as instantId } from "@instantdb/react";
 import { db } from "@/lib/db";
+import { voiceForumSectionLabel } from "@/config/voice-forum-sections.config";
 
 const CATEGORY_COLORS: Record<string, string> = {
+  sports: "bg-orange-100 text-orange-900",
   events: "bg-amber-100 text-amber-800",
   "meet-up": "bg-sky-100 text-sky-800",
   solo: "bg-emerald-100 text-emerald-800",
@@ -174,9 +176,7 @@ export default function VoicePostCard({ post, currentUserId }: VoicePostCardProp
     }
   };
 
-  const categoryLabel = post.category
-    ? post.category.charAt(0).toUpperCase() + post.category.slice(1).replace(/-/g, " ")
-    : null;
+  const categoryLabel = post.category ? voiceForumSectionLabel(post.category) : null;
 
   return (
     <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-200 hover:shadow-md">

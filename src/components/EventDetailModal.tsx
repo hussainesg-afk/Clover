@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { format } from "date-fns";
+import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
 import { parseEventDateTime } from "@/lib/parse-event-date";
 import { getEventImageUrl } from "@/config/event-images.config";
 import { addEventToCalendar, isEventInCalendar } from "@/lib/calendar-events";
+import {
+  EVENT_BOOKING_SOURCE_EVENTS,
+  type EventBookingSource,
+  type EventBookingRow,
+} from "@/lib/event-bookings";
 import type { Event } from "./EventCard";
 
 export interface EventDetail extends Event {
@@ -21,6 +28,8 @@ export interface EventDetail extends Event {
 interface EventDetailModalProps {
   event: EventDetail;
   onClose: () => void;
+  /** Which collection this event row comes from (default: main events feed). */
+  eventSource?: EventBookingSource;
 }
 
 function MapEmbed({
@@ -143,13 +152,19 @@ function getUserPostcode(
   return typeof str === "string" ? str.trim() : undefined;
 }
 
-export default function EventDetailModal({ event, onClose }: EventDetailModalProps) {
+export default function EventDetailModal({
+  event,
+  onClose,
+  eventSource = EVENT_BOOKING_SOURCE_EVENTS,
+}: EventDetailModalProps) {
   const [isAddedToCalendar, setIsAddedToCalendar] = useState(() =>
     isEventInCalendar(event.id)
   );
 
   const user = db.useUser();
+  const userId = user?.id;
   const { data: responsesData } = db.useQuery({ questionnaire_responses: {} });
+  const { data: bookingsData } = db.useQuery({ event_bookings: {} });
   const responses = (responsesData?.questionnaire_responses ?? []) as {
     questionId: string;
     selectedOptionIds: string | string[];
@@ -161,6 +176,52 @@ export default function EventDetailModal({ event, onClose }: EventDetailModalPro
       getUserPostcode(user?.id, responses),
     [user?.id, responsesData?.questionnaire_responses]
   );
+
+  useEffect(() => {
+    setIsAddedToCalendar(isEventInCalendar(event.id));
+  }, [event.id]);
+
+  const bookings = (bookingsData?.event_bookings ?? []) as EventBookingRow[];
+  const myBooking = useMemo(() => {
+    if (!userId) return undefined;
+    return bookings.find(
+      (b) => b.userId === userId && b.eventId === event.id && b.source === eventSource
+    );
+  }, [bookings, userId, event.id, eventSource]);
+
+  const [bookingBusy, setBookingBusy] = useState(false);
+
+  const handleMarkGoing = async () => {
+    if (!userId || myBooking || bookingBusy) return;
+    setBookingBusy(true);
+    try {
+      const bookingId = id();
+      await db.transact([
+        db.tx.event_bookings[bookingId].update({
+          userId,
+          eventId: event.id,
+          source: eventSource,
+          createdAt: Date.now(),
+        }),
+      ]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setBookingBusy(false);
+    }
+  };
+
+  const handleRemoveBooking = async () => {
+    if (!myBooking || bookingBusy) return;
+    setBookingBusy(true);
+    try {
+      await db.transact([db.tx.event_bookings[myBooking.id].delete()]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setBookingBusy(false);
+    }
+  };
 
   let dateStr = "";
   if (event.startDateTime) {
@@ -252,10 +313,45 @@ export default function EventDetailModal({ event, onClose }: EventDetailModalPro
               />
             </div>
 
+            {userId && (
+              <div className="rounded-2xl border border-stone-200 bg-stone-50/80 p-4">
+                <h3 className="text-sm font-semibold text-stone-900">Your plans</h3>
+                {myBooking ? (
+                  <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-teal-800">You have marked this as an event you are going to.</p>
+                    <button
+                      type="button"
+                      onClick={handleRemoveBooking}
+                      disabled={bookingBusy}
+                      className="shrink-0 text-sm font-medium text-stone-500 underline-offset-2 hover:text-stone-800 hover:underline disabled:opacity-50"
+                    >
+                      Not going
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleMarkGoing}
+                    disabled={bookingBusy}
+                    className="mt-2 w-full rounded-xl bg-stone-900 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-stone-800 disabled:opacity-50"
+                  >
+                    {bookingBusy ? "Saving..." : "I am going"}
+                  </button>
+                )}
+                <p className="mt-2 text-xs text-stone-500">
+                  Saved to{" "}
+                  <Link href="/my-bookings" className="font-medium text-teal-700 hover:underline">
+                    My bookings
+                  </Link>
+                  . Invite friends from there.
+                </p>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-3">
               {event.lgbtqFocus && (
                 <span className="rounded-xl bg-rose-100 px-3 py-1 text-sm font-medium text-rose-800">
-                  LGBTQ+ focus
+                  LGBTQ+
                 </span>
               )}
               {(event.costType || event.priceBand) && (

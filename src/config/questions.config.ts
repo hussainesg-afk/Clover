@@ -1,4 +1,11 @@
-export type QuestionType = "single-select" | "multi-select" | "text";
+import {
+  EXPECTATION_PILLARS,
+  EXPECTATION_SLIDER_MAX,
+  EXPECTATION_SLIDER_MIN,
+  expectationQuestionId,
+} from "./expectations-framework.config";
+
+export type QuestionType = "single-select" | "multi-select" | "text" | "slider";
 
 export interface QuestionOption {
   id: string;
@@ -10,6 +17,10 @@ export interface Question {
   text: string;
   type: QuestionType;
   options: QuestionOption[];
+  /** 1–10 expectations sliders only */
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderStep?: number;
 }
 
 export const QUESTIONNAIRE_QUESTIONS: Question[] = [
@@ -277,4 +288,13 @@ export const QUESTIONNAIRE_QUESTIONS: Question[] = [
       { id: "mix", label: "I like a mix of familiar and new" },
     ],
   },
+  ...EXPECTATION_PILLARS.map((pillar) => ({
+    id: expectationQuestionId(pillar.id),
+    text: `How much does ${pillar.label} matter to you? (${pillar.hint}.)`,
+    type: "slider" as const,
+    options: [] as QuestionOption[],
+    sliderMin: EXPECTATION_SLIDER_MIN,
+    sliderMax: EXPECTATION_SLIDER_MAX,
+    sliderStep: 1,
+  })),
 ];

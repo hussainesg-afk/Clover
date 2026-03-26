@@ -5,6 +5,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
+import { EVENT_BOOKING_SOURCE_SOLO } from "@/lib/event-bookings";
 import EventSearchBar from "@/components/EventSearchBar";
 import { filterEventsWithDebug } from "@/lib/filter-events";
 import { filterEventsBySearch } from "@/lib/filter-events-by-search";
@@ -79,7 +80,7 @@ function SoloTopPicksContent() {
           Solo activities matched to your taste and habits.
         </p>
         <div className="mt-8 rounded-2xl border-2 border-dashed border-orange-200 bg-orange-50/50 p-12 text-center text-stone-600 shadow-sm">
-          <p className="font-medium">Complete the questionnaire to see your personalized solo picks</p>
+          <p className="font-medium">Complete the questionnaire to see your personalised solo picks</p>
           <p className="mt-2 text-sm">
             <Link
               href="/questionnaire"
@@ -157,6 +158,7 @@ function SoloTopPicksContent() {
         <EventDetailModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          eventSource={EVENT_BOOKING_SOURCE_SOLO}
         />
       )}
     </div>

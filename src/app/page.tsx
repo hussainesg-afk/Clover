@@ -111,7 +111,6 @@ export default function HomePage() {
   }
 
   const discoverPicks = curatedEvents.slice(0, 3);
-  const activityCount = Math.min(events.length, 7);
 
   return (
     <div className="min-h-screen bg-stone-100">
@@ -166,17 +165,17 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Card grid: Activity, Discover in row 1; Up Next and Entertainment full width */}
+      {/* Card grid: Personalisation insights, Discover in row 1; Up Next and Entertainment full width */}
       <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {/* Activity card */}
+        {/* Personalisation insights card */}
         <Link
-          href="/activity"
+          href="/personalisation-insights"
           className="group flex flex-col rounded-3xl bg-gradient-to-br from-teal-600 to-teal-700 p-5 text-white shadow-lg transition hover:shadow-xl"
         >
-          <span className="text-xs font-medium uppercase tracking-wider text-white/70">This Week</span>
-          <h3 className="mt-1 text-xl font-bold">Activity</h3>
+          <span className="text-xs font-medium uppercase tracking-wider text-white/70">Your profile</span>
+          <h3 className="mt-1 text-xl font-bold">Personalisation insights</h3>
           <p className="mt-3 flex-1 text-sm leading-relaxed text-white/95">
-            You completed {activityCount} activities. Here&apos;s the real impact that&apos;s had on your health.
+            Shape what you want from community life and see it on your personal expectations diagram.
           </p>
           <div className="mt-4 flex items-center justify-between">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20">
@@ -213,7 +212,7 @@ export default function HomePage() {
           </ul>
           <div className="mt-4 flex items-center justify-between">
             <span className="text-sm text-white/90">
-              {curatedEvents.length > 0 ? `${curatedEvents.length} new picks` : "Complete questionnaire for picks"}
+              {curatedEvents.length > 0 ? `${curatedEvents.length} new picks` : "Complete the questionnaire for picks"}
             </span>
             <span className="rounded-xl bg-white/20 px-3 py-1.5 text-sm font-medium transition group-hover:bg-white/30">
               →

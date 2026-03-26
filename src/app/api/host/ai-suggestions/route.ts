@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { init } from "@instantdb/admin";
 import Anthropic from "@anthropic-ai/sdk";
 import { getInstantAppIdForServer, getInstantAdminToken } from "@/lib/instant-server-env";
+import { VOICE_BREADTH_SEEDS } from "@/config/voice-breadth-seeds";
 
 export interface AISuggestion {
   title: string;
@@ -517,11 +518,19 @@ function clusterPosts(posts: PostSummary[]): TopicCluster[] {
 /*      - average age of posts: <3d=15, <7d=12, <14d=8, <30d=4        */
 /*                                                                     */
 /*  No free baseline. 0 upvotes + 1 post = low confidence.            */
+/*  Breadth-seed-* posts count at reduced weight so real voices win.    */
 /* ------------------------------------------------------------------ */
 
-function computeConfidence(cluster: TopicCluster, totalPosts: number): number {
-  const postRatio = cluster.posts.length / Math.max(totalPosts, 1);
-  const demand = Math.min(40, Math.round(postRatio * 100));
+function isBreadthSeedPost(p: PostSummary): boolean {
+  return p.id.startsWith("breadth-seed-");
+}
+
+function computeConfidence(cluster: TopicCluster, totalRealPosts: number): number {
+  const realInCluster = cluster.posts.filter((p) => !isBreadthSeedPost(p)).length;
+  const seedInCluster = cluster.posts.length - realInCluster;
+  const denom = Math.max(totalRealPosts, 1);
+  const weightedClusterSize = realInCluster + seedInCluster * 0.12;
+  const demand = Math.min(40, Math.round((weightedClusterSize / denom) * 100));
 
   const upvotesPerPost = cluster.totalUpvotes / Math.max(cluster.posts.length, 1);
   const engagement = Math.min(25, Math.round(upvotesPerPost * 5));
@@ -557,7 +566,8 @@ function computeConfidence(cluster: TopicCluster, totalPosts: number): number {
 /* ------------------------------------------------------------------ */
 
 function countLocalsInterested(cluster: TopicCluster): number {
-  return cluster.posts.length + cluster.totalUpvotes;
+  const realCount = cluster.posts.filter((p) => !isBreadthSeedPost(p)).length;
+  return realCount + cluster.totalUpvotes;
 }
 
 /* ------------------------------------------------------------------ */
@@ -679,18 +689,19 @@ function buildFallbackSuggestions(
   posts: PostSummary[],
   slots: SlotInfo[],
 ): AISuggestion[] {
+  const totalRealPosts = posts.filter((p) => !isBreadthSeedPost(p)).length;
   const clusters = clusterPosts(posts);
 
   clusters.sort((a, b) => {
-    const confA = computeConfidence(a, posts.length);
-    const confB = computeConfidence(b, posts.length);
+    const confA = computeConfidence(a, totalRealPosts);
+    const confB = computeConfidence(b, totalRealPosts);
     return confB - confA;
   });
 
   const top = clusters.slice(0, MAX_SUGGESTIONS);
 
   return top.map((cluster, i): AISuggestion => {
-    const confidence = computeConfidence(cluster, posts.length);
+    const confidence = computeConfidence(cluster, totalRealPosts);
     const locals = countLocalsInterested(cluster);
     const tags = generateTags(cluster, confidence);
     const { date, time } = resolveTimeSlot(cluster, slots, i);
@@ -771,14 +782,20 @@ export async function POST(req: NextRequest) {
       (s) => s.hostId === hostId && s.status === "available",
     );
 
-    if (recentPosts.length === 0) {
-      return NextResponse.json({
-        suggestions: [],
-        message: "No recent voice posts to analyse.",
-      });
-    }
+    const now = Date.now();
+    const breadthSeedPosts: PostSummary[] = VOICE_BREADTH_SEEDS.map((body, i) => ({
+      id: `breadth-seed-${String(i + 1).padStart(3, "0")}`,
+      body,
+      category: null,
+      postCode: null,
+      socialLevel: null,
+      preferredTime: null,
+      groupSize: null,
+      upvotes: 0,
+      createdAt: now,
+    }));
 
-    const postsForPrompt: PostSummary[] = recentPosts.map((p) => ({
+    const postsFromDb: PostSummary[] = recentPosts.map((p) => ({
       id: String(p.id),
       body: String(p.body ?? ""),
       category: (p.category as string) ?? null,
@@ -787,8 +804,17 @@ export async function POST(req: NextRequest) {
       preferredTime: (p.preferredTime as string) ?? null,
       groupSize: (p.groupSize as string) ?? null,
       upvotes: Array.isArray(p.upvotedBy) ? p.upvotedBy.length : 0,
-      createdAt: typeof p.createdAt === "number" ? p.createdAt : Date.now(),
+      createdAt: typeof p.createdAt === "number" ? p.createdAt : now,
     }));
+
+    const postsForPrompt: PostSummary[] = [...postsFromDb, ...breadthSeedPosts];
+
+    if (postsForPrompt.length === 0) {
+      return NextResponse.json({
+        suggestions: [],
+        message: "No voice signals available to analyse.",
+      });
+    }
 
     const slotsForPrompt: SlotInfo[] = hostSlots.map((s) => ({
       date: String(s.date),
@@ -812,10 +838,10 @@ Rules:
 - estimatedRevenue, resourceCost, and setupTime should be realistic for a small Bristol venue.
 - category should be one of: Wellness, Social, Fitness, Learning, Crafts, Music, Food, Games.
 - tags should include relevant labels like "Ticketed", "Free Entry", "High Demand", "Trending", "Community Value".
-- sourcePostIds must reference the actual post IDs that inspired the suggestion.
+- sourcePostIds must list post IDs that inspired the suggestion. Real voice posts use their database id. Synthetic breadth lines use ids breadth-seed-001 through breadth-seed-100 when matched.
 - Return ONLY valid JSON, no markdown fences.`;
 
-        const userPrompt = `Here are recent community voice posts:
+        const userPrompt = `Here are voice signals: real posts from the last 30 days first, then breadth-seed-001..100 (diverse community-interest prompts). Use both for variety; prefer tying suggestions to real post ids when they match.
 ${JSON.stringify(postsForPrompt, null, 2)}
 
 Here are the host's available quiet slots:

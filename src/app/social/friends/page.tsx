@@ -198,7 +198,7 @@ export default function FriendsPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-stone-800">Friends</h2>
+      <h2 className="text-xl font-bold text-stone-900">Friends</h2>
       <p className="mt-2 text-stone-600">
         Add friends by email and manage your connections.
       </p>
@@ -210,7 +210,7 @@ export default function FriendsPage() {
             value={emailInput}
             onChange={(e) => setEmailInput(e.target.value)}
             placeholder="Enter email to add"
-            className="flex-1 rounded-xl border border-stone-200 px-4 py-3 text-stone-700 placeholder:text-stone-400 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            className="flex-1 rounded-xl border border-stone-200 bg-white px-4 py-3 text-stone-800 placeholder:text-stone-400 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             disabled={searching}
           />
           <button
@@ -222,23 +222,23 @@ export default function FriendsPage() {
           </button>
         </div>
         {error && (
-          <p className="mt-2 text-sm text-amber-600">{error}</p>
+          <p className="mt-2 text-sm text-amber-700">{error}</p>
         )}
       </form>
 
       {pendingIncoming.length > 0 && (
         <div className="mt-8">
-          <h3 className="font-semibold text-stone-800">Pending requests</h3>
-          <p className="mt-1 text-sm text-stone-500">People who want to be your friend</p>
+          <h3 className="font-semibold text-stone-900">Pending requests</h3>
+          <p className="mt-1 text-sm text-stone-600">People who want to be your friend</p>
           <div className="mt-4 space-y-3">
             {pendingIncoming.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-stone-200 bg-stone-50/80 p-4 shadow-sm"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
-                    <span className="font-medium text-stone-800">
+                    <div className="h-12 w-12 shrink-0 rounded-full bg-teal-100" />
+                    <span className="font-medium text-stone-900">
                       {getFriendDisplay(r.from, r, false)}
                     </span>
                   </div>
@@ -266,16 +266,16 @@ export default function FriendsPage() {
 
       {pendingOutgoing.length > 0 && (
         <div className="mt-8">
-          <h3 className="font-semibold text-stone-800">Sent requests</h3>
-          <p className="mt-1 text-sm text-stone-500">Waiting for a response</p>
+          <h3 className="font-semibold text-stone-900">Sent requests</h3>
+          <p className="mt-1 text-sm text-stone-600">Waiting for a response</p>
           <div className="mt-4 space-y-3">
             {pendingOutgoing.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
+                  className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-stone-50/80 p-4 shadow-sm"
                 >
-                  <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
-                  <span className="font-medium text-stone-800">
+                  <div className="h-12 w-12 shrink-0 rounded-full bg-teal-100" />
+                  <span className="font-medium text-stone-900">
                     {getFriendDisplay(r.to, r, true)}
                   </span>
                   <span className="text-sm text-stone-500">Pending</span>
@@ -286,8 +286,8 @@ export default function FriendsPage() {
       )}
 
       <div className="mt-8">
-        <h3 className="font-semibold text-stone-800">Your friends</h3>
-        <p className="mt-1 text-sm text-stone-500">
+        <h3 className="font-semibold text-stone-900">Your friends</h3>
+        <p className="mt-1 text-sm text-stone-600">
           {friends.length === 0
             ? "No friends yet. Add someone by email above."
             : `${friends.length} friend${friends.length === 1 ? "" : "s"}`}
@@ -301,11 +301,11 @@ export default function FriendsPage() {
             return (
               <div
                 key={id}
-                className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50/50 p-4"
+                className="flex items-center justify-between gap-4 rounded-2xl border border-stone-200 bg-stone-50/80 p-4 shadow-sm"
               >
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 shrink-0 rounded-full bg-stone-300" />
-                  <span className="font-medium text-stone-800">{display}</span>
+                  <div className="h-12 w-12 shrink-0 rounded-full bg-teal-100" />
+                  <span className="font-medium text-stone-900">{display}</span>
                 </div>
                 <Link
                   href={`/social/messages?with=${id}`}

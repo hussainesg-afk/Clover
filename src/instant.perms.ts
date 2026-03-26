@@ -109,6 +109,10 @@ const rules = {
       update: "auth.id == data.participant1Id || auth.id == data.participant2Id",
       delete: "auth.id == data.participant1Id || auth.id == data.participant2Id",
     },
+    fields: {
+      participant1LastReadAt: "auth.id == data.participant1Id",
+      participant2LastReadAt: "auth.id == data.participant2Id",
+    },
   },
   quiet_slots: {
     allow: {
@@ -129,6 +133,14 @@ const rules = {
         conversation: "auth.id == data.senderId",
         sender: "auth.id == data.senderId",
       },
+    },
+  },
+  event_bookings: {
+    allow: {
+      view: "auth.id == data.userId",
+      create: "auth.id == data.userId",
+      update: "auth.id == data.userId",
+      delete: "auth.id == data.userId",
     },
   },
 } satisfies InstantRules;

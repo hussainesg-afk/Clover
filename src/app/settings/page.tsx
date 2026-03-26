@@ -122,7 +122,7 @@ function SettingsFormInner({
           <p className="mt-2 text-xs text-stone-500">
             Your postcode from the questionnaire is used to find events near you. Update it in{" "}
             <Link href="/questionnaire" className="text-teal-600 underline hover:text-teal-700">
-              Personalisation
+              the questionnaire
             </Link>
             .
           </p>

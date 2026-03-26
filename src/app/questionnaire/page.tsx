@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
@@ -58,6 +58,17 @@ function QuestionnaireFormInner({
   const [resetting, setResetting] = useState(false);
   const [postcodeError, setPostcodeError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const qCurrent = QUESTIONNAIRE_QUESTIONS[currentIndex];
+  useEffect(() => {
+    if (qCurrent?.type !== "slider") return;
+    setAnswers((prev) => {
+      const cur = prev[qCurrent.id];
+      if (cur !== undefined && cur !== "") return prev;
+      const mid = Math.round(((qCurrent.sliderMin ?? 1) + (qCurrent.sliderMax ?? 10)) / 2);
+      return { ...prev, [qCurrent.id]: String(mid) };
+    });
+  }, [currentIndex, qCurrent?.id, qCurrent?.type, qCurrent?.sliderMin, qCurrent?.sliderMax]);
 
   const handleSingleSelect = (questionId: string, optionId: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
@@ -179,7 +190,7 @@ function QuestionnaireFormInner({
       <div>
         <h1 className="text-2xl font-bold text-stone-900">Find Your Events</h1>
         <p className="mt-1 text-stone-600">
-          Complete the questionnaire to get personalized event recommendations.
+          Complete the questionnaire to get personalised event recommendations.
         </p>
         <div className="mt-8 rounded-2xl border-2 border-dashed border-stone-200 bg-white p-12 text-center text-stone-600 shadow-sm">
           <p className="font-medium">No questions yet</p>
@@ -194,6 +205,7 @@ function QuestionnaireFormInner({
   const q = QUESTIONNAIRE_QUESTIONS[currentIndex];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === QUESTIONNAIRE_QUESTIONS.length - 1;
+
   const accentColors = ["border-l-teal-500", "border-l-cyan-500", "border-l-violet-500", "border-l-orange-500", "border-l-emerald-500"];
   const accent = accentColors[currentIndex % accentColors.length];
 
@@ -212,7 +224,8 @@ function QuestionnaireFormInner({
         <div>
           <h1 className="text-2xl font-bold text-stone-900">Find Your Events</h1>
           <p className="mt-1 text-stone-600">
-            Answer a few questions to get personalized event recommendations. You can come back and update your preferences anytime.
+            Answer a few questions to get personalised event recommendations. You can come back and
+            update your preferences anytime.
           </p>
         </div>
         {myResponses.length > 0 && (
@@ -262,6 +275,45 @@ function QuestionnaireFormInner({
                 placeholder="e.g. BS1 2AB"
                 className="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-700 placeholder:text-stone-400 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
               />
+            ) : q.type === "slider" ? (
+              (() => {
+                const min = q.sliderMin ?? 1;
+                const max = q.sliderMax ?? 10;
+                const step = q.sliderStep ?? 1;
+                const rawStr = answers[q.id] as string | undefined;
+                const parsed =
+                  typeof rawStr === "string" && rawStr !== "" ? Number(rawStr) : Number.NaN;
+                const safe =
+                  Number.isInteger(parsed) && parsed >= min && parsed <= max
+                    ? parsed
+                    : Math.round((min + max) / 2);
+                return (
+                  <div className="space-y-4">
+                    <p className="text-sm text-stone-600">
+                      Drag from {min} (matters least) to {max} (matters most). Lower values sit closer to
+                      the centre on your personalisation diagram.
+                    </p>
+                    <div className="flex items-center justify-between gap-4 text-sm font-medium text-stone-500">
+                      <span>{min}</span>
+                      <span className="text-2xl tabular-nums text-teal-700">{safe}</span>
+                      <span>{max}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={safe}
+                      onChange={(e) => handleTextChange(q.id, e.target.value)}
+                      className="h-3 w-full cursor-pointer appearance-none rounded-full bg-stone-200 accent-teal-600"
+                      aria-valuemin={min}
+                      aria-valuemax={max}
+                      aria-valuenow={safe}
+                      aria-label={`${q.text} Current value ${safe} out of ${max}`}
+                    />
+                  </div>
+                );
+              })()
             ) : q.options.map((opt) =>
               q.type === "single-select" ? (
                 <label
@@ -367,7 +419,7 @@ function QuestionnaireForm() {
 
   return (
     <QuestionnaireFormInner
-      key={myResponses.length > 0 ? "has-responses" : "no-responses"}
+      key={userId}
       userId={userId}
       myResponses={myResponses}
       myUserLocation={myUserLocation}

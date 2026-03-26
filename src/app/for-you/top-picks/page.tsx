@@ -77,7 +77,7 @@ function TopPicksContent() {
           Curated activities matched to your taste and habits.
         </p>
         <div className="mt-8 rounded-2xl border-2 border-dashed border-orange-200 bg-orange-50/50 p-12 text-center text-stone-600 shadow-sm">
-          <p className="font-medium">Complete the questionnaire to see your personalized picks</p>
+          <p className="font-medium">Complete the questionnaire to see your personalised picks</p>
           <p className="mt-2 text-sm">
             <Link
               href="/questionnaire"

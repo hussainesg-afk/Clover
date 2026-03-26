@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
+import { VOICE_BREADTH_SEEDS } from "@/config/voice-breadth-seeds";
+import {
+  VOICE_FORUM_COMPOSER_OPTIONS,
+  type VoiceForumSectionId,
+} from "@/config/voice-forum-sections.config";
 
-const CATEGORIES = [
-  { id: "all", label: "All" },
-  { id: "events", label: "Events" },
-  { id: "meet-up", label: "Meet-up" },
-  { id: "solo", label: "Solo" },
-  { id: "music", label: "Music" },
-] as const;
+type ComposerCategoryId = Exclude<VoiceForumSectionId, "all">;
 
 const SOCIAL_LEVELS = [
   { id: "low", label: "Low interaction" },
@@ -34,8 +33,6 @@ const GROUP_SIZES = [
   { id: "20+", label: "20+ people" },
 ] as const;
 
-type CategoryId = (typeof CATEGORIES)[number]["id"];
-
 interface PostComposerProps {
   userId: string;
   onPostCreated?: () => void;
@@ -44,7 +41,7 @@ interface PostComposerProps {
 export default function PostComposer({ userId, onPostCreated }: PostComposerProps) {
   const [expanded, setExpanded] = useState(false);
   const [body, setBody] = useState("");
-  const [category, setCategory] = useState<CategoryId | "">("");
+  const [category, setCategory] = useState<ComposerCategoryId | "">("");
   const [postCode, setPostCode] = useState("");
   const [socialLevel, setSocialLevel] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
@@ -68,7 +65,7 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
           .update({
             body: trimmed,
             createdAt: Date.now(),
-            category: category && category !== "all" ? category : undefined,
+            category: category || undefined,
             postCode: postCode.trim() || undefined,
             socialLevel: socialLevel || undefined,
             preferredTime: preferredTime || undefined,
@@ -100,6 +97,13 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
     setPreferredTime("");
     setGroupSize("");
     setError(null);
+  };
+
+  const appendIdeaStarter = (line: string) => {
+    setBody((prev) => {
+      const t = prev.trim();
+      return t ? `${t}\n${line}` : line;
+    });
   };
 
   if (!expanded) {
@@ -140,14 +144,35 @@ export default function PostComposer({ userId, onPostCreated }: PostComposerProp
         autoFocus
       />
 
+      <details className="mt-4 rounded-xl border border-stone-200 bg-stone-50/80">
+        <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-stone-700">
+          Idea starters ({VOICE_BREADTH_SEEDS.length}) — tap to add to your post
+        </summary>
+        <div className="max-h-52 overflow-y-auto border-t border-stone-200 px-3 pb-3 pt-2">
+          <div className="flex flex-wrap gap-2">
+            {VOICE_BREADTH_SEEDS.map((line) => (
+              <button
+                key={line}
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => appendIdeaStarter(line)}
+                className="max-w-full rounded-lg bg-white px-2.5 py-1.5 text-left text-xs leading-snug text-stone-700 ring-1 ring-stone-200 transition hover:bg-teal-50 hover:ring-teal-200 disabled:opacity-50"
+              >
+                {line}
+              </button>
+            ))}
+          </div>
+        </div>
+      </details>
+
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <select
           value={category}
-          onChange={(e) => setCategory(e.target.value as CategoryId | "")}
+          onChange={(e) => setCategory(e.target.value as ComposerCategoryId | "")}
           className={selectClass}
         >
-          <option value="">Category (optional)</option>
-          {CATEGORIES.filter((c) => c.id !== "all").map((c) => (
+          <option value="">Board (optional)</option>
+          {VOICE_FORUM_COMPOSER_OPTIONS.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
             </option>
