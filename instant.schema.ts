@@ -147,6 +147,26 @@ const _schema = i.schema({
       source: i.string(),
       createdAt: i.number().indexed(),
     }),
+    daily_prompt_responses: i.entity({
+      userId: i.string(),
+      promptId: i.string(),
+      /** YYYY-MM-DD local date — one response per prompt per day */
+      localDate: i.string(),
+      scaleValue: i.number().optional(),
+      selectedOptionIds: i.json().optional(),
+      createdAt: i.number().indexed(),
+    }),
+    health_daily_summaries: i.entity({
+      userId: i.string(),
+      /** YYYY-MM-DD */
+      date: i.string(),
+      steps: i.number().optional(),
+      distanceKm: i.number().optional(),
+      activeEnergyKcal: i.number().optional(),
+      exerciseMinutes: i.number().optional(),
+      workoutCount: i.number().optional(),
+      createdAt: i.number().indexed(),
+    }),
   },
   links: {
     postAuthor: {

@@ -2,13 +2,18 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { startOfWeek, endOfWeek, getDay } from "date-fns";
+import Link from "next/link";
+import { startOfWeek, endOfWeek, getDay, format, addDays } from "date-fns";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+} from "recharts";
 import { db } from "@/lib/db";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import { filterEventsWithDebug } from "@/lib/filter-events";
 import { getCalendarEventIds } from "@/lib/calendar-events";
 import { parseEventDateTime } from "@/lib/parse-event-date";
 import { classifyActivityType } from "@/lib/activity-classifier";
+import { useHealthSummaries } from "@/lib/health-data";
 import AuthGate from "@/components/AuthGate";
 import WeeklySummaryHero from "@/components/activity/WeeklySummaryHero";
 import ActivityBarChart, { type DayData } from "@/components/activity/ActivityBarChart";
@@ -128,6 +133,163 @@ function getInsightText(
   if (socialCount > 0) parts.push("social");
   const mix = parts.join(", ");
   return `This week you balanced ${mix} activity - a combination that research consistently shows delivers compounding health benefits greater than any single activity type alone. Sustaining this pattern over 8 weeks has been linked to meaningful improvements in sleep quality, mood stability, and long-term disease resistance.`;
+}
+
+function formatNum(n: number): string {
+  return n.toLocaleString("en-GB");
+}
+
+function AppleHealthSection({
+  userId,
+}: {
+  userId: string;
+}) {
+  const { summaries, isLoading } = useHealthSummaries(userId);
+
+  const last30 = useMemo(() => {
+    if (summaries.length === 0) return [];
+    const now = new Date();
+    const cutoff = format(addDays(now, -30), "yyyy-MM-dd");
+    return summaries.filter((s) => s.date >= cutoff && (s.steps ?? 0) > 0);
+  }, [summaries]);
+
+  const weeklyAverages = useMemo(() => {
+    if (last30.length === 0) return null;
+
+    const now = new Date();
+    const currentWeekStart = startOfWeek(now, { weekStartsOn: 1 });
+    const weeks: { label: string; avgSteps: number }[] = [];
+
+    for (let w = 3; w >= 0; w--) {
+      const ws = addDays(currentWeekStart, -w * 7);
+      const we = addDays(ws, 6);
+      const wsKey = format(ws, "yyyy-MM-dd");
+      const weKey = format(we, "yyyy-MM-dd");
+
+      const weekDays = last30.filter(
+        (s) => s.date >= wsKey && s.date <= weKey
+      );
+      if (weekDays.length === 0) continue;
+
+      const avg = Math.round(
+        weekDays.reduce((a, s) => a + (s.steps ?? 0), 0) / weekDays.length
+      );
+      weeks.push({
+        label: w === 0 ? "This week" : format(ws, "d MMM"),
+        avgSteps: avg,
+      });
+    }
+    return weeks.length >= 2 ? weeks : null;
+  }, [last30]);
+
+  const thisWeekAvg = useMemo(() => {
+    if (!weeklyAverages || weeklyAverages.length === 0) return 0;
+    return weeklyAverages[weeklyAverages.length - 1].avgSteps;
+  }, [weeklyAverages]);
+
+  const improvement = useMemo(() => {
+    if (!weeklyAverages || weeklyAverages.length < 2) return null;
+    const previous = weeklyAverages[weeklyAverages.length - 2].avgSteps;
+    const current = weeklyAverages[weeklyAverages.length - 1].avgSteps;
+    if (previous === 0) return null;
+    const diff = current - previous;
+    const pct = Math.round((diff / previous) * 100);
+    return { diff, pct };
+  }, [weeklyAverages]);
+
+  if (isLoading) return null;
+  if (summaries.length === 0) {
+    return (
+      <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100">
+            <svg className="h-5 w-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-stone-900">Apple Health</p>
+            <p className="text-sm text-stone-500">See your real step data from your iPhone</p>
+          </div>
+        </div>
+        <Link
+          href="/settings/health"
+          className="mt-4 flex w-full justify-center rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:from-teal-600 hover:to-cyan-600"
+        >
+          Connect Apple Health
+        </Link>
+      </section>
+    );
+  }
+
+  return (
+    <section>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-stone-900">Your Steps</h2>
+        <Link href="/settings/health" className="text-sm font-medium text-teal-600 hover:text-teal-700 transition">
+          Update
+        </Link>
+      </div>
+
+      <div className="mb-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-400">
+          This week
+        </p>
+        <div className="mt-1 flex items-baseline gap-3">
+          <p className="text-3xl font-bold text-stone-900">
+            {formatNum(thisWeekAvg)}
+          </p>
+          <p className="text-sm text-stone-500">avg steps/day</p>
+        </div>
+        {improvement !== null && improvement.diff !== 0 && (
+          <p
+            className={`mt-2 text-sm font-semibold ${
+              improvement.diff > 0 ? "text-emerald-600" : "text-red-500"
+            }`}
+          >
+            {improvement.diff > 0 ? "+" : ""}
+            {formatNum(Math.abs(improvement.diff))} steps/day vs last week ({improvement.pct > 0 ? "+" : ""}{improvement.pct}%)
+          </p>
+        )}
+        <p className="mt-1 text-xs text-stone-400">Last 30 days of Apple Health data</p>
+      </div>
+
+      {weeklyAverages && (
+        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+          <p className="mb-3 text-sm font-semibold text-stone-700">
+            Avg steps per day by week
+          </p>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={weeklyAverages} barCategoryGap="20%">
+              <XAxis
+                dataKey="label"
+                tick={{ fontSize: 11, fill: "#78716c" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis hide />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: 12,
+                  border: "1px solid #e7e5e4",
+                  fontSize: 13,
+                }}
+                formatter={(value) => [
+                  formatNum(Number(value ?? 0)),
+                  "Avg steps/day",
+                ]}
+              />
+              <Bar
+                dataKey="avgSteps"
+                fill="#14b8a6"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </section>
+  );
 }
 
 function ActivityContent() {
@@ -358,6 +520,8 @@ function ActivityContent() {
             ))}
           </div>
         </section>
+
+        {userId && <AppleHealthSection userId={userId} />}
 
         <CloverInsightCard insight={getInsightText(activityCount, physicalCount, mentalCount, socialCount)} />
 

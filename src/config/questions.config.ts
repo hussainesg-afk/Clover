@@ -21,7 +21,81 @@ export interface Question {
   sliderMin?: number;
   sliderMax?: number;
   sliderStep?: number;
+  sliderLabelMin?: string;
+  sliderLabelMax?: string;
 }
+
+export const PERSONALISATION_QUESTIONS: Question[] = [
+  {
+    id: "employment-status",
+    text: "What is your current employment status?",
+    type: "single-select",
+    options: [
+      { id: "employed-full-time", label: "Employed full-time" },
+      { id: "employed-part-time", label: "Employed part-time" },
+      { id: "self-employed", label: "Self-employed" },
+      { id: "retired", label: "Retired" },
+      { id: "semi-retired", label: "Semi-retired" },
+      { id: "not-working", label: "Not currently working" },
+      { id: "volunteering", label: "Volunteering" },
+      { id: "prefer-not-to-say", label: "Prefer not to say" },
+    ],
+  },
+  {
+    id: "recent-life-changes",
+    text: "Have you experienced any of these life changes recently? (This helps us suggest events and support that may be especially relevant to you.)",
+    type: "multi-select",
+    options: [
+      { id: "retirement", label: "Retirement" },
+      { id: "bereavement", label: "Loss of someone close" },
+      { id: "relocation", label: "Moved to a new area" },
+      { id: "living-alone", label: "Started living alone" },
+      { id: "none", label: "None of these" },
+      { id: "prefer-not-to-say", label: "Prefer not to say" },
+    ],
+  },
+  {
+    id: "health-conditions",
+    text: "To help us find the best events for you, are there any accessibility needs we should know about?",
+    type: "multi-select",
+    options: [
+      { id: "mobility", label: "Physical mobility or dexterity" },
+      { id: "hearing", label: "Hearing" },
+      { id: "vision", label: "Vision" },
+      { id: "chronic-pain", label: "Chronic pain or fatigue" },
+      { id: "mental-health", label: "Mental health (e.g. anxiety, depression)" },
+      { id: "cognitive", label: "Cognitive (e.g. memory)" },
+      { id: "none", label: "None of these apply" },
+      { id: "prefer-not-to-say", label: "Prefer not to say" },
+    ],
+  },
+  {
+    id: "social-confidence",
+    text: "How comfortable are you meeting new people at events?",
+    type: "slider",
+    options: [],
+    sliderMin: 1,
+    sliderMax: 10,
+    sliderStep: 1,
+    sliderLabelMin: "I prefer quieter settings",
+    sliderLabelMax: "I love meeting new people",
+  },
+  {
+    id: "referral-source",
+    text: "How did you hear about us?",
+    type: "single-select",
+    options: [
+      { id: "gp", label: "GP / doctor" },
+      { id: "social-prescriber", label: "Social prescriber" },
+      { id: "community-worker", label: "Community or charity worker" },
+      { id: "friend-family", label: "Friend or family member" },
+      { id: "online-search", label: "Online search" },
+      { id: "local-notice", label: "Local notice / poster" },
+      { id: "other", label: "Other" },
+      { id: "prefer-not-to-say", label: "Prefer not to say" },
+    ],
+  },
+];
 
 export const QUESTIONNAIRE_QUESTIONS: Question[] = [
   {
@@ -111,16 +185,6 @@ export const QUESTIONNAIRE_QUESTIONS: Question[] = [
       { id: "structured", label: "Structured class or workshops" },
       { id: "informal", label: "Informal drop-in" },
       { id: "either", label: "Either" },
-    ],
-  },
-  {
-    id: "meet-new-people",
-    text: "Would you like events that help you meet new people?",
-    type: "single-select",
-    options: [
-      { id: "yes", label: "Yes, definitely" },
-      { id: "no", label: "No, not important" },
-      { id: "sometimes", label: "Sometimes" },
     ],
   },
   {
@@ -255,37 +319,6 @@ export const QUESTIONNAIRE_QUESTIONS: Question[] = [
       { id: "fun", label: "Fun and energetic" },
       { id: "creative", label: "Creative and inspiring" },
       { id: "educational", label: "Educational and focused" },
-    ],
-  },
-  {
-    id: "recommendation-frequency",
-    text: "How often would you like recommendations?",
-    type: "single-select",
-    options: [
-      { id: "daily", label: "Daily" },
-      { id: "weekly", label: "Weekly" },
-      { id: "fortnightly", label: "Fortnightly" },
-      { id: "occasionally", label: "Occasionally" },
-    ],
-  },
-  {
-    id: "discover-new",
-    text: "Are you interested in discovering events you might not normally try?",
-    type: "single-select",
-    options: [
-      { id: "yes", label: "Yes" },
-      { id: "maybe", label: "Maybe" },
-      { id: "no", label: "No" },
-    ],
-  },
-  {
-    id: "familiarity-preference",
-    text: "What best describes you?",
-    type: "single-select",
-    options: [
-      { id: "new-things", label: "I enjoy trying new things" },
-      { id: "familiar", label: "I enjoy familiar activities" },
-      { id: "mix", label: "I like a mix of familiar and new" },
     ],
   },
   ...EXPECTATION_PILLARS.map((pillar) => ({

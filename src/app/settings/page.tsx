@@ -161,6 +161,23 @@ function SettingsFormInner({
           </div>
         </section>
 
+        {/* Advanced Personalisation */}
+        <section className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-stone-900">Advanced Personalisation</h2>
+          <p className="mt-1 text-sm text-stone-600">
+            Help us understand you better to improve your event recommendations.
+          </p>
+          <Link
+            href="/settings/personalisation"
+            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:from-teal-600 hover:to-cyan-600 transition"
+          >
+            Go to Advanced Personalisation
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </section>
+
         <div className="flex flex-col gap-4 sm:flex-row">
           <button
             type="submit"

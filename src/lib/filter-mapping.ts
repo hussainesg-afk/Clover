@@ -123,11 +123,6 @@ export const OPTION_TO_EVENT_ATTR: Record<string, Record<string, string>> = {
     "informal": "Informal drop-in",
     "either": ANY,
   },
-  "meet-new-people": {
-    "yes": "High",
-    "no": ANY,
-    "sometimes": "Medium",
-  },
   "lgbtq-preference": {
     "yes": "Yes",
     "no": ANY,
@@ -194,12 +189,7 @@ export const OPTION_TO_EVENT_ATTR: Record<string, Record<string, string>> = {
     "creative": "Creative and inspiring",
     "educational": "Educational and focused",
   },
-  // Legacy/unmapped questions - map to ANY so they don't break scoring
   "travel-distance": { "under-1mile": ANY, "1-2miles": ANY, "3-5miles": ANY, "anywhere-city": ANY, "online-only": ANY },
-  "recommendation-frequency": { "daily": ANY, "weekly": ANY, "fortnightly": ANY, "occasionally": ANY },
-  "discover-new": { "yes": ANY, "maybe": ANY, "no": ANY },
-  "discover-now": { "yes": ANY, "maybe": ANY, "no": ANY },
-  "familiarity-preference": { "new-things": ANY, "familiar": ANY, "mix": ANY },
 };
 
 export const QUESTION_TO_EVENT_ATTR: Record<string, string> = {
@@ -209,7 +199,6 @@ export const QUESTION_TO_EVENT_ATTR: Record<string, string> = {
   "learning-events": "learningType",
   "social-level": "socialLevel",
   "event-structure": "eventFormat",
-  "meet-new-people": "meetingPeople",
   "lgbtq-preference": "lgbtqFocus",
   "event-timing": "eventTime",
   "event-duration": "durationBand",
@@ -222,8 +211,9 @@ export const QUESTION_TO_EVENT_ATTR: Record<string, string> = {
   "event-mood": "eventMood",
   "postcode": "_skip",
   "travel-distance": "_skip",
-  "recommendation-frequency": "_skip",
-  "discover-new": "_skip",
-  "discover-now": "_skip",
-  "familiarity-preference": "_skip",
+  "employment-status": "_skip",
+  "recent-life-changes": "_skip",
+  "health-conditions": "_skip",
+  "social-confidence": "_skip",
+  "referral-source": "_skip",
 };

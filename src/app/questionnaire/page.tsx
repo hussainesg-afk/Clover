@@ -287,11 +287,14 @@ function QuestionnaireFormInner({
                   Number.isInteger(parsed) && parsed >= min && parsed <= max
                     ? parsed
                     : Math.round((min + max) / 2);
+                const labelMin = q.sliderLabelMin;
+                const labelMax = q.sliderLabelMax;
                 return (
                   <div className="space-y-4">
                     <p className="text-sm text-stone-600">
-                      Drag from {min} (matters least) to {max} (matters most). Lower values sit closer to
-                      the centre on your personalisation diagram.
+                      {labelMin && labelMax
+                        ? `Drag from ${min} (${labelMin}) to ${max} (${labelMax}).`
+                        : `Drag from ${min} (matters least) to ${max} (matters most). Lower values sit closer to the centre on your personalisation diagram.`}
                     </p>
                     <div className="flex items-center justify-between gap-4 text-sm font-medium text-stone-500">
                       <span>{min}</span>

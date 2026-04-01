@@ -143,6 +143,22 @@ const rules = {
       delete: "auth.id == data.userId",
     },
   },
+  daily_prompt_responses: {
+    allow: {
+      view: "auth.id != null && auth.id == data.userId",
+      create: "auth.id != null && auth.id == data.userId",
+      update: "auth.id != null && auth.id == data.userId",
+      delete: "auth.id != null && auth.id == data.userId",
+    },
+  },
+  health_daily_summaries: {
+    allow: {
+      view: "auth.id != null && auth.id == data.userId",
+      create: "auth.id != null && auth.id == data.userId",
+      update: "auth.id != null && auth.id == data.userId",
+      delete: "auth.id != null && auth.id == data.userId",
+    },
+  },
 } satisfies InstantRules;
 
 export default rules;
