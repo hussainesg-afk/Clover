@@ -9,6 +9,7 @@ import { enGB } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { getCalendarEventIds, CALENDAR_UPDATED_EVENT } from "@/lib/calendar-events";
 import EventDetailModal from "@/components/EventDetailModal";
+import LoadingScreen from "@/components/LoadingScreen";
 import type { Event } from "@/components/EventCard";
 import { normalizeEvent } from "@/lib/event-normalizer";
 
@@ -276,11 +277,7 @@ export default function CalendarPage() {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

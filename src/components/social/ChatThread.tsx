@@ -9,6 +9,7 @@ import {
   formatBubbleTime,
   formatDayDivider,
 } from "@/lib/social/messages-utils";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function ReadTicks({ read }: { read: boolean }) {
   return (
@@ -114,12 +115,7 @@ export default function ChatThread({
   }, [body, conversationId, userId, sending, conv]);
 
   if (!conv) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-stone-50">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        <p className="mt-3 text-sm text-stone-500">Loading...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

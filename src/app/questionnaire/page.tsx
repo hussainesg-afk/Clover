@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { QUESTIONNAIRE_QUESTIONS } from "@/config/questions.config";
 import { geocodePostcode } from "@/lib/geocode-postcode";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 type ResponseRow = {
   id: string;
@@ -413,11 +414,7 @@ function QuestionnaireForm() {
   const myUserLocation = allLocations.find((l) => l.userId === userId) ?? null;
 
   if (!userId) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

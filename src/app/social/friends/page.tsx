@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
+import LoadingScreen from "@/components/LoadingScreen";
 
 type FriendRequest = {
   id: string;
@@ -189,11 +190,7 @@ export default function FriendsPage() {
   };
 
   if (!userId) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

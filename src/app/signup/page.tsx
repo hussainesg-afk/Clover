@@ -6,6 +6,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import SignupForm from "@/components/SignupForm";
 import CloverIcon from "@/components/CloverIcon";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function SignupPageContent() {
   const router = useRouter();
@@ -20,11 +21,7 @@ function SignupPageContent() {
   }, [isLoading, user, router, redirectTo]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (user) {
@@ -66,13 +63,7 @@ function SignupPageContent() {
 
 export default function SignupPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LoadingScreen />}>
       <SignupPageContent />
     </Suspense>
   );

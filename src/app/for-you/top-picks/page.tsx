@@ -9,6 +9,7 @@ import EventSearchBar from "@/components/EventSearchBar";
 import { filterEventsWithDebug } from "@/lib/filter-events";
 import { filterEventsBySearch } from "@/lib/filter-events-by-search";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function TopPicksContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -56,11 +57,7 @@ function TopPicksContent() {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!hasResponses) {

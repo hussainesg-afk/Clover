@@ -5,6 +5,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import LoginHomePage from "@/components/LoginHomePage";
 import CloverIcon from "@/components/CloverIcon";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function getGreetingName(email: string | null | undefined): string {
   if (!email) return "";
@@ -22,11 +23,7 @@ export default function HostPage() {
   const greetingName = getGreetingName(user?.email);
 
   if (authLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!user) {
@@ -34,11 +31,7 @@ export default function HostPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

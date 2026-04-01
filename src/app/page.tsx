@@ -9,6 +9,7 @@ import { normalizeEvent } from "@/lib/event-normalizer";
 import { filterEventsWithDebug } from "@/lib/filter-events";
 import type { Event } from "@/components/EventCard";
 import CloverIcon from "@/components/CloverIcon";
+import LoadingScreen from "@/components/LoadingScreen";
 import WeatherWidget from "@/components/WeatherWidget";
 import UpNextCard from "@/components/UpNextCard";
 import { useChosenEvents } from "@/lib/use-chosen-events";
@@ -82,11 +83,7 @@ export default function HomePage() {
   const { nextEvent, laterEvents } = useChosenEvents(events, curatedEvents);
 
   if (authLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!user) {
@@ -94,11 +91,7 @@ export default function HomePage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

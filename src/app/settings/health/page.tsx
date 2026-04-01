@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 import { parseHealthExport } from "@/lib/health-export-parser";
 import {
   useHealthSummaries,
@@ -186,11 +187,7 @@ function HealthSettingsContent() {
   const hasExisting = summaries.length > 0 && !result;
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

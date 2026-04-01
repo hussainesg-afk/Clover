@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import ChatThread from "@/components/social/ChatThread";
 import ConversationSidebar from "@/components/social/ConversationSidebar";
 import NewConversationPanel from "@/components/social/NewConversationPanel";
+import LoadingScreen from "@/components/LoadingScreen";
 import {
   buildFriendsList,
   isAcceptedFriend,
@@ -198,11 +199,7 @@ export default function MessagesPage() {
   );
 
   if (!userId) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const showChat = !!conversationId && !showNew;
@@ -224,19 +221,9 @@ export default function MessagesPage() {
 
   let mainContent: ReactNode;
   if (isLoading && withUserId && !conversationId) {
-    mainContent = (
-      <div className="flex flex-1 flex-col items-center justify-center bg-stone-50">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        <p className="mt-3 text-sm text-stone-500">Loading...</p>
-      </div>
-    );
+    mainContent = <LoadingScreen />;
   } else if (openingWithFriend) {
-    mainContent = (
-      <div className="flex flex-1 flex-col items-center justify-center bg-stone-50">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        <p className="mt-3 text-sm text-stone-500">Opening chat...</p>
-      </div>
-    );
+    mainContent = <LoadingScreen />;
   } else if (showChat && conversationId) {
     mainContent = (
       <ChatThread

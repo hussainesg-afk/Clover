@@ -11,6 +11,7 @@ import { filterEventsWithDebug } from "@/lib/filter-events";
 import { filterEventsBySearch } from "@/lib/filter-events-by-search";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function SoloTopPicksContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -59,11 +60,7 @@ function SoloTopPicksContent() {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-100 py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!hasResponses) {

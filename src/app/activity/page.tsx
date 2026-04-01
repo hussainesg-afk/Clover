@@ -15,6 +15,7 @@ import { parseEventDateTime } from "@/lib/parse-event-date";
 import { classifyActivityType } from "@/lib/activity-classifier";
 import { useHealthSummaries } from "@/lib/health-data";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 import WeeklySummaryHero from "@/components/activity/WeeklySummaryHero";
 import ActivityBarChart, { type DayData } from "@/components/activity/ActivityBarChart";
 import HealthImpactCard from "@/components/activity/HealthImpactCard";
@@ -359,11 +360,7 @@ function ActivityContent() {
   const firstName = getGreetingName(user?.email ?? null);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

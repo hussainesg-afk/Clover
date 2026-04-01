@@ -6,6 +6,7 @@ import { id } from "@instantdb/react";
 import { db } from "@/lib/db";
 import { PERSONALISATION_QUESTIONS } from "@/config/questions.config";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const PERSONALISATION_IDS = new Set(PERSONALISATION_QUESTIONS.map((q) => q.id));
 
@@ -414,11 +415,7 @@ function PersonalisationForm() {
   const myResponses = existingResponses.filter((r) => r.userId === userId);
 
   if (!userId) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

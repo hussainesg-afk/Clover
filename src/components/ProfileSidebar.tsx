@@ -1,14 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { db } from "@/lib/db";
 import CloverIcon from "@/components/CloverIcon";
+import { fetchPostcodeAreaLabel } from "@/lib/postcode-area";
 
-function getDisplayName(email: string | null | undefined): string {
-  if (!email) return "User";
-  const part = email.split("@")[0];
-  if (!part) return "User";
-  return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+function getSidebarDisplayName(
+  user: { displayName?: string | null; email?: string | null } | null
+): string {
+  if (!user) return "User";
+  const dn = user.displayName?.trim();
+  if (dn) return dn;
+  const email = user.email;
+  if (email) {
+    const part = email.split("@")[0];
+    if (part) {
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    }
+  }
+  return "User";
+}
+
+function getUserPostcode(
+  userId: string | undefined,
+  responses: { questionId: string; selectedOptionIds: string | string[]; userId?: string; createdAt?: number }[]
+): string | undefined {
+  if (!userId) return undefined;
+  const postcodeResponses = responses
+    .filter((r) => r.userId === userId && r.questionId === "postcode")
+    .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  const postcodeResponse = postcodeResponses[0];
+  if (!postcodeResponse) return undefined;
+  const val = postcodeResponse.selectedOptionIds;
+  const str = Array.isArray(val) ? val[0] : val;
+  return typeof str === "string" ? str.trim() : undefined;
 }
 
 function FriendsIcon({ className }: { className?: string }) {
@@ -63,11 +89,47 @@ function SettingsIcon({ className }: { className?: string }) {
 interface ProfileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  user: { email?: string | null } | null;
+  user: { email?: string | null; displayName?: string | null } | null;
 }
 
 export default function ProfileSidebar({ isOpen, onClose, user }: ProfileSidebarProps) {
-  const displayName = getDisplayName(user?.email);
+  const profile = db.useUser();
+  const mergedUser = profile ?? user;
+  const displayName = getSidebarDisplayName(mergedUser);
+  const userId = mergedUser?.id;
+
+  const { data: responsesData } = db.useQuery({ questionnaire_responses: {} });
+  const postcode = useMemo(() => {
+    const rows = (responsesData?.questionnaire_responses ?? []) as {
+      questionId: string;
+      selectedOptionIds: string | string[];
+      userId?: string;
+      createdAt?: number;
+    }[];
+    return getUserPostcode(userId, rows);
+  }, [responsesData?.questionnaire_responses, userId]);
+
+  const [areaLabel, setAreaLabel] = useState<string | null>(null);
+  const [areaLoading, setAreaLoading] = useState(false);
+
+  useEffect(() => {
+    if (!postcode) {
+      setAreaLabel(null);
+      setAreaLoading(false);
+      return;
+    }
+    setAreaLoading(true);
+    let cancelled = false;
+    fetchPostcodeAreaLabel(postcode).then((label) => {
+      if (!cancelled) {
+        setAreaLabel(label);
+        setAreaLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [postcode]);
 
   useEffect(() => {
     if (isOpen) {
@@ -117,13 +179,12 @@ export default function ProfileSidebar({ isOpen, onClose, user }: ProfileSidebar
               <div className="h-14 w-14 shrink-0 rounded-full bg-stone-300" aria-hidden />
               <div className="min-w-0 flex-1">
                 <h2 className="text-lg font-bold text-white">{displayName}</h2>
-                <p className="mt-0.5 text-sm text-white/90">Henleaze, Bristol</p>
+                {areaLabel ? (
+                  <p className="mt-0.5 text-sm text-white/90">{areaLabel}</p>
+                ) : areaLoading ? (
+                  <p className="mt-0.5 text-sm text-white/70">Loading location...</p>
+                ) : null}
               </div>
-            </div>
-            <div className="mt-4 rounded-2xl bg-teal-600/80 px-4 py-3">
-              <p className="text-sm leading-relaxed text-white">
-                View the direct health benefits of your logged activities.
-              </p>
             </div>
           </div>
 

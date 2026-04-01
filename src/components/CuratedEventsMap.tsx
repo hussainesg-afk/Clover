@@ -11,6 +11,7 @@ import {
 import EventCard, { type Event } from "./EventCard";
 import { format } from "date-fns";
 import { parseEventDateTime } from "@/lib/parse-event-date";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const mapContainerStyle = {
   width: "100%",
@@ -259,26 +260,7 @@ export default function CuratedEventsMap({
 
   // Loading: map script loading
   if (isMapLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {toShow.map((event) => (
-            <MapEventCard
-              key={event.id}
-              event={event}
-              isSelected={false}
-              onClick={() => onEventClick?.(event)}
-            />
-          ))}
-        </div>
-        <div
-          className="flex min-h-[320px] items-center justify-center rounded-2xl border border-stone-200 bg-stone-50"
-          style={{ backgroundColor: "#E0E7C7" }}
-        >
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Fallback: no map (no API key, not loaded, or no coords) – show cards only

@@ -7,6 +7,7 @@ import EventCard, { type Event } from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import HostAuthGate from "@/components/HostAuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function MyEventsContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -31,11 +32,7 @@ function MyEventsContent() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

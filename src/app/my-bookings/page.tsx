@@ -15,6 +15,7 @@ import { buildFriendsList, isAcceptedFriend, type FriendRequestWithUsers } from 
 import { sendEventInviteMessage } from "@/lib/social/event-invite";
 import type { ConversationRow } from "@/lib/social/messages-utils";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function formatEventWhen(startDateTime?: string): string {
   if (!startDateTime) return "Date TBC";
@@ -157,11 +158,7 @@ function MyBookingsContent() {
   );
 
   if (!userId) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -183,9 +180,7 @@ function MyBookingsContent() {
       )}
 
       {isLoading ? (
-        <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-        </div>
+        <LoadingScreen />
       ) : sortedRows.length === 0 ? (
         <div className="rounded-2xl border border-stone-200 bg-white p-8 text-center shadow-sm">
           <p className="text-stone-600">You have not marked any events yet.</p>

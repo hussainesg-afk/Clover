@@ -10,6 +10,7 @@ import EventSearchBar from "@/components/EventSearchBar";
 import { normalizeEvent } from "@/lib/event-normalizer";
 import { filterEventsBySearch } from "@/lib/filter-events-by-search";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function SoloBrowseContent() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -27,11 +28,7 @@ function SoloBrowseContent() {
   const filteredEvents = filterEventsBySearch(events, searchQuery);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

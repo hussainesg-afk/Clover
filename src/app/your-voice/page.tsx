@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import AuthGate from "@/components/AuthGate";
+import LoadingScreen from "@/components/LoadingScreen";
 import { db } from "@/lib/db";
 import PostComposer from "@/components/voice/PostComposer";
 import VoicePostCard, { type VoicePost } from "@/components/voice/VoicePostCard";
@@ -158,9 +159,7 @@ function YourVoiceContent() {
       </section>
 
       {isLoading ? (
-        <div className="flex min-h-[200px] items-center justify-center rounded-2xl bg-white">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
-        </div>
+        <LoadingScreen />
       ) : error ? (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-700">
           <p className="font-medium">Something went wrong</p>
